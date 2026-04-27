@@ -1,0 +1,317 @@
+{
+  "theoryProgress": {
+    "notStarted": "Não iniciada",
+    "started": "Iniciada",
+    "studied": "Estudada",
+    "quizDone": "Quiz concluído",
+    "sandboxUsed": "Sandbox testado",
+    "markAsStudied": "Marcar como estudada",
+    "lessonStudied": "Aula estudada",
+    "signInToSave": "Entre na sua conta para salvar seu progresso.",
+    "recommendedNextStep": "Próximo passo recomendado",
+    "studyTheory": "Estudar Teoria",
+    "takeQuiz": "Fazer Quiz",
+    "trySandbox": "Testar no Sandbox",
+    "startMission": "Iniciar Missão",
+    "continueJourney": "Continuar Jornada",
+    "recommendedBeforeMission": "Recomendado antes da missão:\nEstude a teoria deste módulo para entender melhor o que será praticado."
+  },
+  "nav": {
+    "home": "Início",
+    "requestia": "Requestia",
+    "tracks": "Trilhas",
+    "roadmap": "Jornada",
+    "status": "Status",
+    "dashboard": "Dashboard",
+    "login": "Entrar",
+    "register": "Cadastrar",
+    "logout": "Sair"
+  },
+  "auth": {
+    "welcome_back": "Bem-vindo de volta",
+    "create_account": "Criar conta",
+    "email": "Email",
+    "password": "Senha",
+    "name": "Nome",
+    "login_btn": "Entrar",
+    "register_btn": "Cadastrar",
+    "no_account": "Não tem uma conta?",
+    "have_account": "Já tem uma conta?"
+  },
+  "dashboard": {
+    "hello": "Olá",
+    "level": "Nível",
+    "xp": "XP Total",
+    "continue_learning": "Continue aprendendo",
+    "explore_requestia": "Explorar Requestia",
+    "next_mission": "Próxima missão recomendada"
+  },
+  "requestia": {
+    "title": "Mapa de Requestia",
+    "subtitle": "Explore as regiões deste mundo cibernético e desvende os mistérios da comunicação entre sistemas.",
+    "explore": "Explorar",
+    "soon_message": "Esta região será liberada em breve.",
+    "status": {
+      "disponível": "Disponível",
+      "em breve": "Em breve"
+    },
+    "regions": {
+      "http": {
+        "name": "Vale HTTP",
+        "desc": "Fundamentos de métodos, headers e status codes."
+      },
+      "rest": {
+        "name": "Cidade REST",
+        "desc": "Recursos, sub-recursos, paginação e design de APIs."
+      },
+      "auth": {
+        "name": "Torre da Autenticação",
+        "desc": "Tokens, JWT, OAuth e Middlewares de segurança."
+      },
+      "logs": {
+        "name": "Observatório dos Logs",
+        "desc": "Tracing, correlação e monitoramento de falhas."
+      },
+      "webhooks": {
+        "name": "Porto dos Webhooks",
+        "desc": "Callbacks assíncronos e retry policies."
+      },
+      "graphql": {
+        "name": "Floresta GraphQL",
+        "desc": "Consultas flexíveis, mutations e subscriptions."
+      },
+      "websocket": {
+        "name": "Arena WebSocket",
+        "desc": "Comunicação bidirecional e tempo real."
+      },
+      "event": {
+        "name": "Fábrica Event-Driven",
+        "desc": "Mensageria, filas, RabbitMQ e Kafka."
+      },
+      "grpc": {
+        "name": "Laboratório gRPC",
+        "desc": "Alta performance, Protobuf e streams."
+      }
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Aprenda APIs visualizando o caminho de cada requisição.",
+      "subtitle": "Entre em Requestia, resolva missões reais, siga fluxos de integração passo a passo e domine APIs modernas com a experiência de um laboratório futurista.",
+      "exploreRequestia": "Explorar Requestia",
+      "viewJourney": "Ver Jornada"
+    },
+    "features": {
+      "1": {
+        "title": "O que é o IntegraLab?",
+        "desc": "Uma plataforma educacional onde você aprende sistemas distribuídos colocando a mão na massa. Não apenas endpoints soltos, mas fluxos assíncronos completos e interligados."
+      },
+      "2": {
+        "title": "O que é Requestia?",
+        "desc": "Um universo gamificado interno. Uma representação visual imersiva da internet onde cada requisição sua é um dado vivo navegando pela infraestrutura real de rede."
+      },
+      "3": {
+        "title": "Trilhas Futuras",
+        "desc": "Explore o mundo do HTTP avançado, mergulhe em integrações via GraphQL, Webhooks, WebSocket, SSE, Event-driven APIs e contratos rígidos com gRPC."
+      }
+    }
+  },
+  "journey": {
+    "title": "Jornada de Aprendizado em Requestia",
+    "subtitle": "Avance por trilhas progressivas e aprenda como APIs e integrações modernas funcionam por dentro, dos fundamentos de rede aos fluxos assíncronos e sistemas distribuídos.",
+    "modules": {
+      "1": {
+        "title": "Módulo 1 — Fundamentos da Internet",
+        "topics": ["Cliente e servidor", "IP", "Portas", "TCP/IP", "DNS", "Domínio", "URL", "Diferença entre internet, web e API"]
+      },
+      "2": {
+        "title": "Módulo 2 — HTTP por dentro",
+        "topics": ["Requisição", "Resposta", "Métodos HTTP", "Headers", "Body", "Query params", "Path params", "Cookies", "Status codes", "Idempotência"]
+      },
+      "3": {
+        "title": "Módulo 3 — HTTPS, TLS e segurança básica",
+        "topics": ["Diferença entre HTTP e HTTPS", "TLS", "Certificados", "Criptografia em trânsito", "Riscos de tráfego sem HTTPS", "Boas práticas de segurança em APIs"]
+      },
+      "4": {
+        "title": "Módulo 4 — REST na prática",
+        "topics": ["Recursos", "Endpoints", "Boas práticas REST", "Paginação", "Filtros", "Ordenação", "Versionamento", "Erros de negócio"]
+      },
+      "5": {
+        "title": "Módulo 5 — Autenticação e autorização",
+        "topics": ["API Key", "Basic Auth", "Bearer Token", "JWT", "Refresh token", "Roles", "Permissions", "Diferença entre 401 e 403"]
+      },
+      "6": {
+        "title": "Módulo 6 — CORS, navegador e segurança frontend",
+        "topics": ["Same-Origin Policy", "CORS", "Preflight", "Headers de segurança", "Por que uma API funciona no Postman e falha no navegador"]
+      },
+      "7": {
+        "title": "Módulo 7 — Contratos de API",
+        "topics": ["JSON Schema", "OpenAPI", "Swagger", "Validação de payload", "Documentação viva", "Versionamento de contrato"]
+      },
+      "8": {
+        "title": "Módulo 8 — Debug, erros e observabilidade",
+        "topics": ["Logs", "Correlation ID", "Traces", "Métricas", "Timeout", "Retry", "Rate limit", "Erros 400, 401, 403, 404, 409, 422 e 500"]
+      },
+      "9": {
+        "title": "Módulo 9 — Webhooks",
+        "topics": ["Eventos externos", "Assinatura", "Retry", "Idempotência", "Duplicidade", "Pagamentos", "Confirmação assíncrona"]
+      },
+      "10": {
+        "title": "Módulo 10 — GraphQL",
+        "topics": ["Schema", "Query", "Mutation", "Resolver", "Overfetching", "Underfetching", "N+1", "Subscriptions"]
+      },
+      "11": {
+        "title": "Módulo 11 — Tempo real",
+        "topics": ["Polling", "Server-Sent Events", "WebSocket", "Reconexão", "Broadcasting", "Notificações", "Chat"]
+      },
+      "12": {
+        "title": "Módulo 12 — Event-driven APIs",
+        "topics": ["Producer", "Consumer", "Filas", "Tópicos", "Eventos", "DLQ", "Reprocessamento", "Consistência eventual"]
+      },
+      "13": {
+        "title": "Módulo 13 — gRPC e contratos fortes",
+        "topics": ["Protocol Buffers", ".proto", "Service", "Message", "Unary call", "Streaming", "Geração de cliente"]
+      },
+      "14": {
+        "title": "Módulo 14 — Integrações reais",
+        "topics": ["Pagamento", "Pedido", "Estoque", "Emissão fiscal", "Notificação", "Gateway", "API externa indisponível", "Compensação", "Falhas parciais"]
+      }
+    }
+  },
+  "tracks": {
+    "title": "Trilhas de Aprendizado",
+    "subtitle": "Explore nossas trilhas práticas e avance no seu conhecimento sobre APIs.",
+    "viewDetails": "Ver Detalhes",
+    "loading": "Carregando trilhas...",
+    "empty": "Nenhuma trilha encontrada. Verifique se o seed do banco de dados foi executado.",
+    "start": "Começar Trilha"
+  },
+  "status": {
+    "available": "Disponível",
+    "locked": "Bloqueado",
+    "coming_soon": "Em breve",
+    "completed": "Concluída"
+  },
+  "actions": {
+    "continue": "Continuar",
+    "review": "Revisar",
+    "start": "Começar"
+  },
+  "mission": {
+    "submit_error": "Erro ao submeter resposta. Tente novamente.",
+    "check_error": "Erro ao verificar. Tente novamente.",
+    "starting_lab": "Iniciando Laboratório...",
+    "not_found": "Missão não encontrada ou acesso negado.",
+    "locked_title": "Missão Bloqueada",
+    "go_prev": "Ir para missão anterior",
+    "back_track": "Voltar para a Trilha",
+    "back_map": "Voltar para o Mapa",
+    "completed_rev": "CONCLUÍDA (REVISÃO)",
+    "auth_required_title": "Autenticação Necessária",
+    "auth_required_desc": "Você precisa estar logado para ver o conteúdo guiado, o cenário de simulação e enviar respostas.",
+    "guided_study": "Modo Estudo Guiado",
+    "step": "Passo",
+    "of": "de",
+    "common_mistake": "Erro Comum:",
+    "checkpoint": "Checkpoint Rápido",
+    "your_answer": "Sua resposta...",
+    "checking": "Verificando...",
+    "check_btn": "Verificar resposta",
+    "correct": "Correto!",
+    "not_yet": "Ainda não.",
+    "prev": "Anterior",
+    "next": "Próximo",
+    "sim_scenario": "Simulação da Requisição",
+    "select_correct": "Selecione a Alternativa Correta:",
+    "input_cmd": "Comando do Terminal / Resposta da Missão:",
+    "processing": "Processando...",
+    "submit_btn": "Submeter Requisição"
+  },
+  "flow": {
+    "run": "Executar fluxo",
+    "pause": "Pausar",
+    "restart": "Reiniciar",
+    "previousStep": "Passo anterior",
+    "nextStep": "Próximo passo",
+    "timeline": "Linha do tempo",
+    "request": "Request",
+    "response": "Response",
+    "logs": "Logs",
+    "currentStep": "Etapa atual",
+    "completed": "Concluído",
+    "waiting": "Aguardando",
+    "error": "Erro",
+    "speed": "Velocidade",
+    "status": "Status",
+    "method": "Método",
+    "path": "Caminho",
+    "statusCode": "Código",
+    "noPayload": "Sem payload",
+    "noResponse": "Sem resposta",
+    "finished": "Fluxo concluído"
+  },
+  "sandbox": {
+    "title": "Sandbox HTTP",
+    "subtitle": "Teste seus endpoints interativamente em um ambiente seguro.",
+    "method": "Método",
+    "path": "Caminho",
+    "headers": "Cabeçalhos",
+    "addHeader": "Adicionar",
+    "useDemoToken": "Usar token demo",
+    "useJson": "Usar Content-Type JSON",
+    "presetLoaded": "Preset da missão carregado",
+    "restorePreset": "Restaurar preset",
+    "presetUnavailable": "Sem preset específico. Iniciando em GET /products",
+    "controlledSimulationNotice": "Simulação controlada: nenhuma chamada externa será feita.",
+    "body": "Corpo (JSON)",
+    "runRequest": "Executar Requisição",
+    "loading": "Executando...",
+    "responseHeaders": "Headers da Resposta",
+    "responseBody": "Corpo da Resposta",
+    "logs": "Logs de Execução",
+    "hints": "Dicas Didáticas",
+    "invalidJson": "Formato JSON inválido",
+    "emptyBody": "Corpo vazio",
+    "status": "Status",
+    "networkError": "Erro de Rede",
+    "checkConnection": "Verifique se o backend está rodando em {url}",
+    "noResponseYet": "Envie uma requisição para ver a resposta aqui"
+  },
+  "lesson": {
+    "studyConcept": "Estudar conceito",
+    "readingTime": "Tempo de leitura",
+    "minutes": "minutos",
+    "theoryLabel": "Teoria",
+    "keyConcepts": "Conceitos-chave",
+    "commonMistakes": "Erros comuns",
+    "practicalExample": "Exemplo prático",
+    "requestExample": "Requisição (Request)",
+    "responseExample": "Resposta (Response)",
+    "relatedConcepts": "Conceitos relacionados",
+    "beforeMission": "Antes de ir para a missão",
+    "testInSandbox": "Testar no Sandbox",
+    "goToMission": "Ir para a missão prática",
+    "backToModule": "Voltar para o módulo",
+    "noLessons": "Nenhuma teoria disponível",
+    "loading": "Carregando aula...",
+    "not_found": "Aula não encontrada.",
+    "whatYouWillLearn": "O que você vai aprender",
+    "analogy": "Analogia para facilitar",
+    "conceptDefinition": "Definição",
+    "conceptImportance": "Por que importa?",
+    "conceptExample": "Exemplo",
+    "commonMistakesDetailed": "Erros Comuns (e como evitá-los)",
+    "whyIsItWrong": "Por que está errado?",
+    "theCorrection": "A correção",
+    "glossary": "Glossário Rápido",
+    "checkYourKnowledge": "Mini Autoavaliação",
+    "checkAnswer": "Verificar resposta",
+    "correct": "Correto!",
+    "incorrect": "Ops, não é bem isso.",
+    "copyCode": "Copiar",
+    "copied": "Copiado!",
+    "watchOut": "Cuidado",
+    "theoryBadge": "Teoria",
+    "minRead": "min leitura"
+  }
+}

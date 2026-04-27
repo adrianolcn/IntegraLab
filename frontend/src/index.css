@@ -1,0 +1,88 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    --pattern-rgb: 59, 130, 246; /* blue-500 */
+    --bg-pattern-opacity: 0.45;
+    --bg-app: #f8fbff;
+    --bg-app-gradient: linear-gradient(to bottom right, #f8fbff, #e0e7ff);
+    --bg-surface: rgba(255, 255, 255, 0.75);
+    --bg-surface-elevated: rgba(255, 255, 255, 0.80);
+    --border-subtle: rgba(226, 232, 240, 0.6);
+    --border-strong: rgba(148, 163, 184, 0.5);
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --glow-primary: rgba(59, 130, 246, 0.25);
+    --glow-radial: radial-gradient(circle at 20% 0%, rgba(59, 130, 246, 0.15), transparent 40%);
+    --hero-overlay: rgba(255, 255, 255, 0.6);
+  }
+  
+  .dark {
+    --pattern-rgb: 99, 102, 241; /* indigo-500 */
+    --bg-pattern-opacity: 0.15;
+    --bg-app: #07111f;
+    --bg-app-gradient: linear-gradient(to bottom right, #07111f, #020617);
+    --bg-surface: rgba(15, 23, 42, 0.70);
+    --bg-surface-elevated: rgba(15, 23, 42, 0.76);
+    --border-subtle: rgba(51, 65, 85, 0.5);
+    --border-strong: rgba(71, 85, 105, 0.8);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --glow-primary: rgba(99, 102, 241, 0.20);
+    --glow-radial: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 50%);
+    --hero-overlay: rgba(15, 23, 42, 0.85);
+  }
+  
+  body {
+    @apply text-textPrimary antialiased min-h-screen transition-colors duration-300;
+    background-color: var(--bg-app);
+  }
+}
+
+@layer utilities {
+  .app-background-gradient {
+    background-image: var(--bg-app-gradient);
+  }
+  
+  .app-background-glow {
+    background-image: var(--glow-radial);
+  }
+
+  .app-background-pattern {
+    opacity: var(--bg-pattern-opacity);
+    background-image:
+      linear-gradient(30deg, rgba(var(--pattern-rgb), 0.35) 12%, transparent 12.5%, transparent 87%, rgba(var(--pattern-rgb), 0.35) 87.5%, rgba(var(--pattern-rgb), 0.35)),
+      linear-gradient(150deg, rgba(var(--pattern-rgb), 0.35) 12%, transparent 12.5%, transparent 87%, rgba(var(--pattern-rgb), 0.35) 87.5%, rgba(var(--pattern-rgb), 0.35)),
+      linear-gradient(30deg, rgba(var(--pattern-rgb), 0.35) 12%, transparent 12.5%, transparent 87%, rgba(var(--pattern-rgb), 0.35) 87.5%, rgba(var(--pattern-rgb), 0.35)),
+      linear-gradient(150deg, rgba(var(--pattern-rgb), 0.35) 12%, transparent 12.5%, transparent 87%, rgba(var(--pattern-rgb), 0.35) 87.5%, rgba(var(--pattern-rgb), 0.35)),
+      linear-gradient(60deg, rgba(var(--pattern-rgb), 0.22) 25%, transparent 25.5%, transparent 75%, rgba(var(--pattern-rgb), 0.22) 75%, rgba(var(--pattern-rgb), 0.22)),
+      linear-gradient(60deg, rgba(var(--pattern-rgb), 0.22) 25%, transparent 25.5%, transparent 75%, rgba(var(--pattern-rgb), 0.22) 75%, rgba(var(--pattern-rgb), 0.22));
+    background-position:
+      0 0,
+      0 0,
+      48px 84px,
+      48px 84px,
+      0 0,
+      48px 84px;
+    background-size: 96px 168px;
+  }
+
+  .glass-panel {
+    background-color: var(--bg-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 6px -1px var(--glow-primary);
+  }
+
+  .glass-panel-elevated {
+    background-color: var(--bg-surface-elevated);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 10px 15px -3px var(--glow-primary);
+  }
+}

@@ -1,0 +1,53 @@
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'STUDENT',
+    total_xp INT NOT NULL DEFAULT 0,
+    level INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tracks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    order_index INT NOT NULL DEFAULT 0,
+    status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE learning_modules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    track_id UUID NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    order_index INT NOT NULL DEFAULT 0,
+    status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE missions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    module_id UUID NOT NULL REFERENCES learning_modules(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    objective TEXT,
+    difficulty VARCHAR(50) NOT NULL DEFAULT 'BEGINNER',
+    xp_reward INT NOT NULL DEFAULT 0,
+    order_index INT NOT NULL DEFAULT 0,
+    status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE',
+    mission_type VARCHAR(50) NOT NULL,
+    expected_answer TEXT,
+    success_feedback TEXT,
+    error_feedback TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

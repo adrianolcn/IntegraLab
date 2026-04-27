@@ -1,0 +1,318 @@
+{
+  "theoryProgress": {
+    "notStarted": "Not started",
+    "started": "Started",
+    "studied": "Studied",
+    "quizDone": "Quiz completed",
+    "sandboxUsed": "Sandbox tested",
+    "markAsStudied": "Mark as studied",
+    "lessonStudied": "Lesson studied",
+    "signInToSave": "Sign in to save your progress.",
+    "recommendedNextStep": "Recommended next step",
+    "studyTheory": "Study Theory",
+    "takeQuiz": "Take Quiz",
+    "trySandbox": "Try Sandbox",
+    "startMission": "Start Mission",
+    "continueJourney": "Continue Journey",
+    "recommendedBeforeMission": "Recommended before this mission:\nStudy this module's theory to better understand what you will practice."
+  },
+  "nav": {
+    "home": "Home",
+    "requestia": "Requestia",
+    "tracks": "Tracks",
+    "roadmap": "Journey",
+    "status": "Status",
+    "dashboard": "Dashboard",
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out"
+  },
+  "auth": {
+    "welcome_back": "Welcome back",
+    "create_account": "Create account",
+    "email": "Email address",
+    "password": "Password",
+    "name": "Full name",
+    "login_btn": "Sign in",
+    "register_btn": "Sign up",
+    "no_account": "Don't have an account?",
+    "have_account": "Already have an account?"
+  },
+  "dashboard": {
+    "hello": "Hello",
+    "level": "Level",
+    "xp": "Total XP",
+    "continue_learning": "Continue learning",
+    "explore_requestia": "Explore Requestia",
+    "next_mission": "Recommended next mission"
+  },
+  "requestia": {
+    "title": "Map of Requestia",
+    "subtitle": "Explore the regions of this cybernetic world and unravel the mysteries of system communication.",
+    "explore": "Explore",
+    "soon_message": "This region will be unlocked soon.",
+    "status": {
+      "disponível": "Available",
+      "em breve": "Coming soon"
+    },
+    "regions": {
+      "http": {
+        "name": "HTTP Valley",
+        "desc": "Fundamentals of methods, headers, and status codes."
+      },
+      "rest": {
+        "name": "REST City",
+        "desc": "Resources, sub-resources, pagination, and API design."
+      },
+      "auth": {
+        "name": "Tower of Authentication",
+        "desc": "Tokens, JWT, OAuth, and Security Middlewares."
+      },
+      "logs": {
+        "name": "Logs Observatory",
+        "desc": "Tracing, correlation, and failure monitoring."
+      },
+      "webhooks": {
+        "name": "Webhooks Port",
+        "desc": "Asynchronous callbacks and retry policies."
+      },
+      "graphql": {
+        "name": "GraphQL Forest",
+        "desc": "Flexible queries, mutations, and subscriptions."
+      },
+      "websocket": {
+        "name": "WebSocket Arena",
+        "desc": "Bidirectional real-time communication."
+      },
+      "event": {
+        "name": "Event-Driven Factory",
+        "desc": "Messaging, queues, RabbitMQ, and Kafka."
+      },
+      "grpc": {
+        "name": "gRPC Laboratory",
+        "desc": "High performance, Protobuf, and streams."
+      }
+    }
+  },
+  "landing": {
+    "hero": {
+      "title": "Learn APIs by visualizing the path of every request.",
+      "subtitle": "Enter Requestia, solve real missions, follow integration flows step by step, and master modern APIs through a futuristic lab experience.",
+      "exploreRequestia": "Explore Requestia",
+      "viewJourney": "View Journey"
+    },
+    "features": {
+      "1": {
+        "title": "What is IntegraLab?",
+        "desc": "An educational platform where you learn distributed systems hands-on. Not just loose endpoints, but complete, interconnected asynchronous flows."
+      },
+      "2": {
+        "title": "What is Requestia?",
+        "desc": "An internal gamified universe. An immersive visual representation of the internet where every request is live data navigating real network infrastructure."
+      },
+      "3": {
+        "title": "Future Tracks",
+        "desc": "Explore advanced HTTP, dive into integrations via GraphQL, Webhooks, WebSocket, SSE, Event-driven APIs, and rigid contracts with gRPC."
+      }
+    }
+  },
+  "journey": {
+    "title": "Learning Journey in Requestia",
+    "subtitle": "Advance through progressive tracks and learn how modern APIs and integrations work inside, from networking fundamentals to asynchronous flows and distributed systems.",
+    "modules": {
+      "1": {
+        "title": "Module 1 — Internet Fundamentals",
+        "topics": ["Client and server", "IP", "Ports", "TCP/IP", "DNS", "Domain", "URL", "Difference between internet, web, and API"]
+      },
+      "2": {
+        "title": "Module 2 — Inside HTTP",
+        "topics": ["Request", "Response", "HTTP methods", "Headers", "Body", "Query params", "Path params", "Cookies", "Status codes", "Idempotency"]
+      },
+      "3": {
+        "title": "Module 3 — HTTPS, TLS and basic security",
+        "topics": ["Difference between HTTP and HTTPS", "TLS", "Certificates", "Encryption in transit", "Risks of traffic without HTTPS", "API security best practices"]
+      },
+      "4": {
+        "title": "Module 4 — REST in practice",
+        "topics": ["Resources", "Endpoints", "REST best practices", "Pagination", "Filters", "Sorting", "Versioning", "Business errors"]
+      },
+      "5": {
+        "title": "Module 5 — Authentication and authorization",
+        "topics": ["API Key", "Basic Auth", "Bearer Token", "JWT", "Refresh token", "Roles", "Permissions", "Difference between 401 and 403"]
+      },
+      "6": {
+        "title": "Module 6 — CORS, browser and frontend security",
+        "topics": ["Same-Origin Policy", "CORS", "Preflight", "Security headers", "Why an API works in Postman but fails in the browser"]
+      },
+      "7": {
+        "title": "Module 7 — API contracts",
+        "topics": ["JSON Schema", "OpenAPI", "Swagger", "Payload validation", "Living documentation", "Contract versioning"]
+      },
+      "8": {
+        "title": "Module 8 — Debugging, errors and observability",
+        "topics": ["Logs", "Correlation ID", "Traces", "Metrics", "Timeout", "Retry", "Rate limit", "Errors 400, 401, 403, 404, 409, 422 and 500"]
+      },
+      "9": {
+        "title": "Module 9 — Webhooks",
+        "topics": ["External events", "Signature", "Retry", "Idempotency", "Duplication", "Payments", "Asynchronous confirmation"]
+      },
+      "10": {
+        "title": "Module 10 — GraphQL",
+        "topics": ["Schema", "Query", "Mutation", "Resolver", "Overfetching", "Underfetching", "N+1", "Subscriptions"]
+      },
+      "11": {
+        "title": "Module 11 — Real-time",
+        "topics": ["Polling", "Server-Sent Events", "WebSocket", "Reconnection", "Broadcasting", "Notifications", "Chat"]
+      },
+      "12": {
+        "title": "Module 12 — Event-driven APIs",
+        "topics": ["Producer", "Consumer", "Queues", "Topics", "Events", "DLQ", "Reprocessing", "Eventual consistency"]
+      },
+      "13": {
+        "title": "Module 13 — gRPC and strong contracts",
+        "topics": ["Protocol Buffers", ".proto", "Service", "Message", "Unary call", "Streaming", "Client generation"]
+      },
+      "14": {
+        "title": "Module 14 — Real-world integrations",
+        "topics": ["Payment", "Order", "Inventory", "Tax issuance", "Notification", "Gateway", "External API unavailable", "Compensation", "Partial failures"]
+      }
+    }
+  },
+  "tracks": {
+    "title": "Learning Tracks",
+    "subtitle": "Explore our hands-on tracks and advance your API knowledge.",
+    "viewDetails": "View Details",
+    "loading": "Loading tracks...",
+    "empty": "No tracks found. Check if the database seed was executed.",
+    "start": "Start Track"
+  },
+  "status": {
+    "available": "Available",
+    "locked": "Locked",
+    "coming_soon": "Coming soon",
+    "completed": "Completed"
+  },
+  "actions": {
+    "continue": "Continue",
+    "review": "Review",
+    "start": "Start"
+  },
+  "mission": {
+    "submit_error": "Error submitting answer. Please try again.",
+    "check_error": "Error verifying. Please try again.",
+    "starting_lab": "Starting Lab...",
+    "not_found": "Mission not found or access denied.",
+    "locked_title": "Mission Locked",
+    "go_prev": "Go to previous mission",
+    "back_track": "Back to Track",
+    "back_map": "Back to Map",
+    "completed_rev": "COMPLETED (REVIEW)",
+    "auth_required_title": "Authentication Required",
+    "auth_required_desc": "You need to be logged in to see the guided content, the simulation scenario, and submit answers.",
+    "guided_study": "Guided Study Mode",
+    "step": "Step",
+    "of": "of",
+    "common_mistake": "Common Mistake:",
+    "checkpoint": "Quick Checkpoint",
+    "your_answer": "Your answer...",
+    "checking": "Verifying...",
+    "check_btn": "Verify answer",
+    "correct": "Correct!",
+    "not_yet": "Not yet.",
+    "prev": "Previous",
+    "next": "Next",
+    "sim_scenario": "Request Simulation",
+    "select_correct": "Select the Correct Option:",
+    "input_cmd": "Terminal Command / Mission Answer:",
+    "processing": "Processing...",
+    "submit_btn": "Submit Request"
+  },
+  "flow": {
+    "run": "Run flow",
+    "pause": "Pause",
+    "restart": "Restart",
+    "previousStep": "Previous step",
+    "nextStep": "Next step",
+    "timeline": "Timeline",
+    "request": "Request",
+    "response": "Response",
+    "logs": "Logs",
+    "currentStep": "Current step",
+    "completed": "Completed",
+    "waiting": "Waiting",
+    "error": "Error",
+    "speed": "Speed",
+    "status": "Status",
+    "method": "Method",
+    "path": "Path",
+    "statusCode": "Status Code",
+    "noPayload": "No payload",
+    "noResponse": "No response",
+    "finished": "Flow finished"
+  },
+  "sandbox": {
+    "title": "HTTP Sandbox",
+    "subtitle": "Test your endpoints interactively in a safe environment.",
+    "method": "Method",
+    "path": "Path",
+    "headers": "Headers",
+    "addHeader": "Add Header",
+    "useDemoToken": "Use demo token",
+    "useJson": "Use Content-Type JSON",
+    "presetLoaded": "Mission preset loaded",
+    "restorePreset": "Restore preset",
+    "presetUnavailable": "No specific preset. Falling back to GET /products",
+    "controlledSimulationNotice": "Controlled simulation: no external request will be made.",
+    "body": "Body (JSON)",
+    "runRequest": "Run Request",
+    "loading": "Executing request...",
+    "responseHeaders": "Response Headers",
+    "responseBody": "Response Body",
+    "logs": "Execution Logs",
+    "hints": "Didactic Hints",
+    "useJsonContentType": "Use JSON Content-Type",
+    "invalidJson": "Invalid JSON format",
+    "emptyBody": "Empty body",
+    "status": "Status",
+    "networkError": "Network Error",
+    "checkConnection": "Please check if the backend is running at {url}",
+    "noResponseYet": "Send a request to see the response here"
+  },
+  "lesson": {
+    "studyConcept": "Study concept",
+    "readingTime": "Reading time",
+    "minutes": "minutes",
+    "theoryLabel": "Theory",
+    "keyConcepts": "Key concepts",
+    "commonMistakes": "Common mistakes",
+    "practicalExample": "Practical example",
+    "requestExample": "Request",
+    "responseExample": "Response",
+    "relatedConcepts": "Related concepts",
+    "beforeMission": "Before you go to the mission",
+    "testInSandbox": "Test in Sandbox",
+    "goToMission": "Go to practical mission",
+    "backToModule": "Back to module",
+    "noLessons": "No theory available",
+    "loading": "Loading lesson...",
+    "not_found": "Lesson not found.",
+    "whatYouWillLearn": "What you will learn",
+    "analogy": "Analogy to make it easier",
+    "conceptDefinition": "Definition",
+    "conceptImportance": "Why it matters",
+    "conceptExample": "Example",
+    "commonMistakesDetailed": "Common Mistakes (and how to avoid them)",
+    "whyIsItWrong": "Why is it wrong?",
+    "theCorrection": "The correction",
+    "glossary": "Quick Glossary",
+    "checkYourKnowledge": "Mini Knowledge Check",
+    "checkAnswer": "Check answer",
+    "correct": "Correct!",
+    "incorrect": "Oops, not quite.",
+    "copyCode": "Copy",
+    "copied": "Copied!",
+    "watchOut": "Watch out",
+    "theoryBadge": "Theory",
+    "minRead": "min read"
+  }
+}
