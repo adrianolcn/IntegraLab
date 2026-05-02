@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestController
@@ -30,7 +31,7 @@ public class TheoryLessonController {
             @RequestHeader(value = "Accept-Language", defaultValue = "pt-BR") String language) {
         try {
             return ResponseEntity.ok(theoryLessonService.getLessonsByModuleSlug(slug, language));
-        } catch (Exception e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -41,7 +42,7 @@ public class TheoryLessonController {
             @RequestHeader(value = "Accept-Language", defaultValue = "pt-BR") String language) {
         try {
             return ResponseEntity.ok(theoryLessonService.getLessonById(id, language));
-        } catch (Exception e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
     }

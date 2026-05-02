@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { api, type TheoryLesson, type TheoryProgress } from '../../lib/api';
+import { api, type LearningModule, type TheoryLesson, type TheoryProgress, type Track } from '../../lib/api';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -34,14 +34,36 @@ import DebugChecklist from './components/theory/DebugChecklist';
 import ErrorTriageCards from './components/theory/ErrorTriageCards';
 import RequestInspector from './components/theory/RequestInspector';
 import LogInspector from './components/theory/LogInspector';
+import RequestResponseCyclePlayer from './components/theory/RequestResponseCyclePlayer';
+import RequestResponseAnatomy from './components/theory/RequestResponseAnatomy';
+import CycleExampleCards from './components/theory/CycleExampleCards';
+import RequestResponseMistakes from './components/theory/RequestResponseMistakes';
 
 export default function LessonDetail() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [lesson, setLesson] = useState<TheoryLesson | null>(null);
+  const [module, setModule] = useState<LearningModule | null>(null);
+  const [track, setTrack] = useState<Track | null>(null);
   const [progress, setProgress] = useState<TheoryProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const toCommaItems = (value?: string | null) =>
+    (value ?? '')
+      .replace(/\\n/g, '\n')
+      .split(/\n|;/)
+      .flatMap((chunk) => chunk.split(/\s*,\s*/))
+      .map((item) => item.replace(/^- /, '').trim())
+      .filter(Boolean);
+
+  const toSentenceItems = (value?: string | null) =>
+    (value ?? '')
+      .replace(/\\n/g, '\n')
+      .split(/\.\s+|\n|;/)
+      .map((item) => item.replace(/^- /, '').trim())
+      .filter(Boolean)
+      .map((item) => (item.endsWith('.') ? item : `${item}.`));
 
   useEffect(() => {
     async function load() {
@@ -50,6 +72,22 @@ export default function LessonDetail() {
       try {
         const data = await api.getTheoryLessonById(lessonId);
         setLesson(data);
+
+        try {
+          const moduleData = await api.getModuleById(data.moduleId);
+          setModule(moduleData);
+          try {
+            const trackData = await api.getTrackById(moduleData.trackId);
+            setTrack(trackData);
+          } catch (err) {
+            console.error(err);
+            setTrack(null);
+          }
+        } catch (err) {
+          console.error(err);
+          setModule(null);
+          setTrack(null);
+        }
         
         if (user) {
           try {
@@ -87,12 +125,18 @@ export default function LessonDetail() {
   if (isLoading) return <div className="p-12 text-textMuted animate-pulse">{t('lesson.loading', 'Carregando aula...')}</div>;
   if (!lesson) return <div className="p-12 text-rose-500 font-bold">{t('lesson.not_found', 'Aula não encontrada.')}</div>;
 
+  const keyConceptItems = !lesson.keyConceptsDetailed ? toCommaItems(lesson.keyConcepts) : [];
+  const commonMistakeItems = !lesson.commonMistakesDetailed ? toSentenceItems(lesson.commonMistakes) : [];
+  const relatedConceptItems = toCommaItems(lesson.relatedConcepts);
+  const backLink = track ? `/tracks/${track.slug}` : '/tracks';
+  const backLabel = track ? t('lesson.backToTrack', 'Voltar para a trilha') : t('lesson.backToModule', 'Voltar para o módulo');
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex justify-between items-center mb-8">
-        <Link to="/tracks" className="inline-flex items-center text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
+        <Link to={backLink} className="inline-flex items-center text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
           <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-          {t('lesson.backToModule', 'Voltar para o módulo')}
+          {backLabel}
         </Link>
         {!user && (
           <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
@@ -117,6 +161,12 @@ export default function LessonDetail() {
           
           <h1 className="text-4xl md:text-5xl font-extrabold text-textMain leading-tight mb-6">{lesson.title}</h1>
           <p className="text-xl text-textMuted leading-relaxed">{lesson.summary}</p>
+          {(track || module) && (
+            <div className="mt-6 flex flex-wrap gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
+              {track && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-borderSubtle">{track.title}</span>}
+              {module && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-borderSubtle">{module.title}</span>}
+            </div>
+          )}
         </div>
 
         <div className="p-8 md:p-12 bg-white/50 dark:bg-slate-900/40">
@@ -134,6 +184,23 @@ export default function LessonDetail() {
               .map((paragraph, i) => {
               
               if (!paragraph.trim()) return null;
+
+              // Inject [[VERB_SUMMARY]]
+              if (paragraph.includes('[[REQUEST_RESPONSE_CYCLE]]')) {
+                return <RequestResponseCyclePlayer key={`rrc-${i}`} glossaryJson={lesson.glossary} />;
+              }
+
+              if (paragraph.includes('[[REQUEST_RESPONSE_ANATOMY]]')) {
+                return <RequestResponseAnatomy key={`rra-${i}`} glossaryJson={lesson.glossary} />;
+              }
+
+              if (paragraph.includes('[[CYCLE_EXAMPLES]]')) {
+                return <CycleExampleCards key={`rrx-${i}`} glossaryJson={lesson.glossary} />;
+              }
+
+              if (paragraph.includes('[[REQUEST_RESPONSE_MISTAKES]]')) {
+                return <RequestResponseMistakes key={`rrm-${i}`} glossaryJson={lesson.glossary} />;
+              }
 
               // Inject [[VERB_SUMMARY]]
               if (paragraph.includes('[[VERB_SUMMARY]]')) {
@@ -260,7 +327,7 @@ export default function LessonDetail() {
           </div>
 
           {/* 3.5 Fluxo Interativo */}
-          {lesson.interactiveFlow && (
+          {lesson.interactiveFlow && !lesson.content.includes('[[REQUEST_RESPONSE_CYCLE]]') && (
             <InteractiveFlowPlayer flowJson={lesson.interactiveFlow} glossaryJson={lesson.glossary} />
           )}
 
@@ -278,10 +345,40 @@ export default function LessonDetail() {
           {lesson.keyConceptsDetailed && (
             <ConceptAccordion conceptsJson={lesson.keyConceptsDetailed} />
           )}
+          {!lesson.keyConceptsDetailed && keyConceptItems.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-textMain mb-6 flex items-center">
+                <svg className="w-6 h-6 mr-2 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {t('lesson.keyConcepts', 'Conceitos-chave')}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {keyConceptItems.map((item, index) => (
+                  <div key={`${item}-${index}`} className="bg-white dark:bg-slate-800/80 rounded-xl border border-borderSubtle px-4 py-3 shadow-sm">
+                    <p className="text-textMain font-medium">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* 7. Erros Comuns */}
           {lesson.commonMistakesDetailed && (
             <MistakeCard mistakesJson={lesson.commonMistakesDetailed} />
+          )}
+          {!lesson.commonMistakesDetailed && commonMistakeItems.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-rose-600 dark:text-rose-400 mb-6 flex items-center">
+                <svg className="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                {t('lesson.commonMistakes', 'Erros comuns')}
+              </h3>
+              <div className="space-y-3">
+                {commonMistakeItems.map((item, index) => (
+                  <div key={`${item}-${index}`} className="bg-white dark:bg-slate-800 rounded-xl border border-rose-200 dark:border-rose-900/50 px-4 py-3 shadow-sm">
+                    <p className="text-textMain">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* 8. Exemplos práticos / técnicos */}
@@ -310,6 +407,22 @@ export default function LessonDetail() {
           {/* 9. Glossário */}
           {lesson.glossary && (
             <GlossaryList glossaryJson={lesson.glossary} />
+          )}
+
+          {relatedConceptItems.length > 0 && (
+            <div className="mb-12">
+              <h3 className="text-2xl font-bold text-textMain mb-5 flex items-center">
+                <svg className="w-6 h-6 mr-2 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 14h.01M16 10h.01M9 16h6M7 4h10a2 2 0 012 2v12l-4-3H7a2 2 0 01-2-2V6a2 2 0 012-2z" /></svg>
+                {t('lesson.relatedConcepts', 'Conceitos relacionados')}
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {relatedConceptItems.map((item, index) => (
+                  <span key={`${item}-${index}`} className="rounded-full border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-900/20 px-4 py-2 text-sm font-medium text-sky-800 dark:text-sky-200">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* 10. Mini Autoavaliação */}
@@ -383,10 +496,10 @@ export default function LessonDetail() {
             </>
           ) : (
               <Link 
-                to="/tracks"
+                to={backLink}
                 className="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 px-6 py-3.5 rounded-xl font-bold transition-colors shadow-sm text-center flex items-center justify-center"
               >
-                {t('lesson.backToModule', 'Voltar para o módulo')}
+                {backLabel}
               </Link>
             )}
           </div>

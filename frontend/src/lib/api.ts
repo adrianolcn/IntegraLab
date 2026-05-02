@@ -161,9 +161,21 @@ export const api = {
     return response.json();
   },
 
+  async getTrackById(trackId: string): Promise<Track> {
+    const response = await fetch(`${API_BASE_URL}/api/tracks/${trackId}`, { headers: getHeaders() });
+    if (!response.ok) throw new Error('Track not found');
+    return response.json();
+  },
+
   async getModulesByTrackId(trackId: string): Promise<LearningModule[]> {
     const response = await fetch(`${API_BASE_URL}/api/tracks/${trackId}/modules`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Failed to fetch modules');
+    return response.json();
+  },
+
+  async getModuleById(moduleId: string): Promise<LearningModule> {
+    const response = await fetch(`${API_BASE_URL}/api/modules/${moduleId}`, { headers: getHeaders() });
+    if (!response.ok) throw new Error('Module not found');
     return response.json();
   },
 

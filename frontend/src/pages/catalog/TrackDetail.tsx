@@ -174,6 +174,11 @@ export default function TrackDetail() {
                   </div>
                 );
               })}
+              {missions.length === 0 && lessons.length > 0 && (
+                <div className="p-6 text-sm text-textMuted text-center font-medium bg-white dark:bg-slate-800/10">
+                  {t('tracks.theory_only_module', 'Este módulo já tem teoria disponível. Estude a aula para preparar sua base antes das próximas missões.')}
+                </div>
+              )}
               {missions.length === 0 && lessons.length === 0 && (
                 <div className="p-6 text-sm text-textMuted text-center font-medium">{t('tracks.empty_missions', 'Nenhuma missão cadastrada neste módulo ainda.')}</div>
               )}

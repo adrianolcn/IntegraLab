@@ -11,8 +11,8 @@ export default function TheoryLessonCard({ lesson, progress }: TheoryLessonCardP
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white/80 dark:bg-slate-800/80 p-5 border-b border-borderSubtle transition-all hover:bg-slate-50 dark:hover:bg-slate-800 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-      <div className="flex items-start gap-4">
+    <div className="flex flex-col justify-between gap-4 border-b border-borderSubtle bg-white/80 p-5 transition-all hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 sm:flex-row sm:items-center">
+      <div className="flex min-w-0 items-start gap-4">
         <div className="mt-1">
           <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-300 dark:border-indigo-500/50 flex items-center justify-center shadow-sm dark:shadow-[0_0_15px_rgba(99,102,241,0.3)]">
             <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -20,8 +20,8 @@ export default function TheoryLessonCard({ lesson, progress }: TheoryLessonCardP
             </svg>
           </div>
         </div>
-        <div>
-          <h4 className="text-lg font-bold text-textMain flex items-center gap-3">
+        <div className="min-w-0">
+          <h4 className="flex flex-wrap items-center gap-2 text-lg font-bold text-textMain">
             {lesson.title}
             
             {/* Status Chips */}
@@ -47,7 +47,7 @@ export default function TheoryLessonCard({ lesson, progress }: TheoryLessonCardP
               </span>
             )}
           </h4>
-          <p className="text-sm text-textMuted mt-1 line-clamp-2">{lesson.summary}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-textMuted">{lesson.summary}</p>
           
           {(() => {
             if (!lesson.learningObjectives) return null;
@@ -69,7 +69,7 @@ export default function TheoryLessonCard({ lesson, progress }: TheoryLessonCardP
             return null;
           })()}
 
-          <div className="text-xs mt-3 flex gap-3 items-center">
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
             <span className="font-bold text-indigo-600 dark:text-indigo-400 flex items-center">
               <svg className="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               {lesson.readingTimeMinutes} {t('lesson.minutes', 'minutos')}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { api, type Mission, type TheoryLesson, type TheoryProgress } from '../../lib/api';
+import { api, type Mission, type TheoryLesson, type TheoryProgress, type Track } from '../../lib/api';
 import FlowViewer from './components/FlowViewer';
 import HttpSandboxPanel from './components/HttpSandboxPanel';
 import FeedbackPanel from './components/FeedbackPanel';
@@ -25,6 +25,7 @@ export default function MissionDetail() {
   const [feedback, setFeedback] = useState<any>(null);
   const [relatedLesson, setRelatedLesson] = useState<TheoryLesson | null>(null);
   const [lessonProgress, setLessonProgress] = useState<TheoryProgress | null>(null);
+  const [track, setTrack] = useState<Track | null>(null);
 
   // Checkpoint states
   const [checkpointAnswer, setCheckpointAnswer] = useState('');
@@ -42,6 +43,19 @@ export default function MissionDetail() {
       try {
         const m = await api.getMissionBySlug(slug);
         setMission(m);
+        try {
+          const moduleData = await api.getModuleById(m.moduleId);
+          try {
+            const trackData = await api.getTrackById(moduleData.trackId);
+            setTrack(trackData);
+          } catch (err) {
+            console.error(err);
+            setTrack(null);
+          }
+        } catch (err) {
+          console.error(err);
+          setTrack(null);
+        }
         
         if (m && user) {
           try {
@@ -138,6 +152,7 @@ export default function MissionDetail() {
   if (!mission) return <div className="p-12 text-red-500 text-center text-2xl font-bold">{t('mission.not_found', 'Missão não encontrada ou acesso negado.')}</div>;
 
   const currentStep = guidedSteps.length > 0 ? guidedSteps[currentStepIdx] : null;
+  const trackHref = track ? `/tracks/${track.slug}` : '/tracks';
 
   if (access && access.accessStatus === 'LOCKED') {
     return (
@@ -155,7 +170,7 @@ export default function MissionDetail() {
                 {t('mission.go_prev', 'Ir para missão anterior')}
               </Link>
             )}
-            <Link to="/tracks/fundamentos-apis-http" className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm">
+            <Link to={trackHref} className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm">
               {t('mission.back_track', 'Voltar para a Trilha')}
             </Link>
           </div>
@@ -170,9 +185,9 @@ export default function MissionDetail() {
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="mb-6 flex justify-between items-center">
-          <Link to="/tracks/fundamentos-apis-http" className="text-sm font-bold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 flex items-center transition-colors">
+          <Link to={trackHref} className="text-sm font-bold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 flex items-center transition-colors">
             <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            {t('mission.back_map', 'Voltar para o Mapa')}
+            {t('mission.back_track', 'Voltar para a Trilha')}
           </Link>
           <div className="flex items-center gap-2">
             {access && access.accessStatus === 'COMPLETED' && (
@@ -330,7 +345,7 @@ export default function MissionDetail() {
                 <div className="bg-white dark:bg-transparent rounded-xl border border-borderSubtle dark:border-transparent">
                   <FlowViewer scenario={scenario} />
                 </div>
-                <div className="mt-8">
+                <div className="mt-8" id="sandbox">
                   <HttpSandboxPanel missionSlug={mission.slug} />
                 </div>
               </div>

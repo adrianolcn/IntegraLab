@@ -79,30 +79,31 @@ export default function AuthFlowPlayer({ glossaryJson }: AuthFlowPlayerProps) {
   return (
     <div className="my-8 bg-surface border border-borderSubtle rounded-xl overflow-hidden shadow-sm flex flex-col">
       {/* Visual Animation Area */}
-      <div className="h-48 bg-slate-900 p-6 flex flex-col justify-center relative overflow-hidden">
-        <div className="flex justify-between items-center w-full max-w-lg mx-auto relative z-10">
+      <div className="min-h-[220px] bg-slate-900 p-4 sm:p-6 flex flex-col justify-center relative overflow-hidden">
+        <div className="flex items-center justify-between gap-3 sm:gap-4 w-full max-w-xl mx-auto relative z-10 min-w-0">
           
           {/* Client Node */}
-          <div className="flex flex-col items-center">
-            <div className={`w-16 h-16 rounded-lg flex items-center justify-center border-2 transition-colors ${current.from === 'client' || current.to === 'client' ? 'bg-indigo-600 border-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.5)]' : 'bg-slate-800 border-slate-700'}`}>
+          <div className="flex shrink-0 flex-col items-center min-w-0">
+            <div className={`h-14 w-14 sm:h-16 sm:w-16 rounded-lg flex items-center justify-center border-2 transition-colors ${current.from === 'client' || current.to === 'client' ? 'bg-indigo-600 border-indigo-400 shadow-[0_0_15px_rgba(79,70,229,0.5)]' : 'bg-slate-800 border-slate-700'}`}>
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
             </div>
-            <span className="text-slate-300 font-bold mt-2 text-sm">{t('authflow.client', 'Cliente')}</span>
+            <span className="mt-2 text-center text-xs font-bold text-slate-300 sm:text-sm">{t('authflow.client', 'Cliente')}</span>
           </div>
 
           {/* Connection Path */}
-          <div className="flex-1 mx-4 relative h-12 flex items-center justify-center">
+          <div className="relative mx-1 flex h-12 min-w-0 flex-1 items-center justify-center sm:mx-4">
             {/* The line */}
             <div className="absolute w-full border-t border-slate-700 border-dashed top-1/2"></div>
             
             {/* The animated payload */}
             {current.from !== current.to && (
               <div 
-                className={`absolute bg-amber-400 px-3 py-1 rounded text-[10px] font-bold text-slate-900 z-10 transition-all duration-1000 ease-in-out`}
+                className="absolute z-10 max-w-full rounded bg-amber-400 px-2.5 py-1 text-center text-[10px] font-bold leading-tight text-slate-900 transition-all duration-1000 ease-in-out sm:max-w-[200px]"
                 style={{
                   left: current.from === 'client' ? '10%' : '80%',
                   transform: 'translateX(-50%)'
                 }}
+                title={current.label}
               >
                 {current.label}
               </div>
@@ -110,18 +111,18 @@ export default function AuthFlowPlayer({ glossaryJson }: AuthFlowPlayerProps) {
 
             {/* Self processing */}
             {current.from === current.to && (
-              <div className={`absolute px-3 py-1 rounded text-[10px] font-bold z-10 ${current.from === 'server' ? 'bg-emerald-500 text-slate-900 right-0' : 'bg-indigo-500 text-white left-0'}`}>
+              <div className={`absolute z-10 max-w-full rounded px-2.5 py-1 text-center text-[10px] font-bold leading-tight ${current.from === 'server' ? 'right-0 bg-emerald-500 text-slate-900' : 'left-0 bg-indigo-500 text-white'}`} title={current.label}>
                 {current.label}
               </div>
             )}
           </div>
 
           {/* Server Node */}
-          <div className="flex flex-col items-center">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-colors ${current.from === 'server' || current.to === 'server' ? 'bg-emerald-600 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-slate-800 border-slate-700'}`}>
+          <div className="flex shrink-0 flex-col items-center min-w-0">
+            <div className={`h-14 w-14 sm:h-16 sm:w-16 rounded-full flex items-center justify-center border-2 transition-colors ${current.from === 'server' || current.to === 'server' ? 'bg-emerald-600 border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-slate-800 border-slate-700'}`}>
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
             </div>
-            <span className="text-slate-300 font-bold mt-2 text-sm">{t('authflow.server', 'Servidor')}</span>
+            <span className="mt-2 text-center text-xs font-bold text-slate-300 sm:text-sm">{t('authflow.server', 'Servidor')}</span>
           </div>
 
         </div>
@@ -148,14 +149,14 @@ export default function AuthFlowPlayer({ glossaryJson }: AuthFlowPlayerProps) {
           showRestart={step === steps.length - 1}
         />
 
-        <div className="flex-1">
-          <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-indigo-600 dark:text-indigo-400">
             Passo {step + 1} de {steps.length}
           </div>
-          <h3 className="text-xl font-black text-textMain mb-2">
+          <h3 className="mb-2 text-xl font-black text-textMain break-words">
             {current.title}
           </h3>
-          <p className="text-textMain/80 leading-relaxed text-sm md:text-base">
+          <p className="break-words text-sm leading-relaxed text-textMain/80 md:text-base">
             <ConceptText text={current.desc} glossaryJson={glossaryJson} />
           </p>
         </div>

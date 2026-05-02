@@ -19,20 +19,20 @@ export default function LogInspector({ glossaryJson }: LogInspectorProps) {
             Server Application Logs (Datadog/Kibana)
           </span>
         </div>
-        <div className="p-4 md:p-6 font-mono text-xs sm:text-sm overflow-x-auto leading-loose whitespace-nowrap text-slate-300">
-          <div>
+        <div className="overflow-x-auto p-4 font-mono text-xs leading-loose text-slate-300 sm:text-sm md:p-6">
+          <div className="whitespace-pre-wrap break-words">
             <span className="text-slate-500">[2023-10-27T14:32:01Z]</span>{' '}
             <span className="text-blue-400">INFO</span>{' '}
             <span className="text-slate-400">[req-9f8a2]</span>{' '}
             Handling POST /api/v1/payments
           </div>
-          <div>
+          <div className="whitespace-pre-wrap break-words">
             <span className="text-slate-500">[2023-10-27T14:32:02Z]</span>{' '}
             <span className="text-yellow-400">WARN</span>{' '}
             <span className="text-slate-400">[req-9f8a2]</span>{' '}
             User account is flagged for review. Proceeding with caution.
           </div>
-          <div>
+          <div className="whitespace-pre-wrap break-words">
             <span className="text-slate-500">[2023-10-27T14:32:03Z]</span>{' '}
             <span className="text-red-500 bg-red-900/30 px-1 font-bold">ERROR</span>{' '}
             <span className="text-white font-bold border-b border-dashed border-white cursor-help" title="Correlation ID">[req-9f8a2]</span>{' '}

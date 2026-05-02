@@ -20,8 +20,8 @@ export default function RequestInspector({ glossaryJson }: RequestInspectorProps
 
   return (
     <div className="my-8 bg-slate-900 rounded-xl overflow-hidden shadow-lg border border-slate-700 flex flex-col md:flex-row">
-      <div className="flex-1 p-6 md:p-8 font-mono text-sm sm:text-base leading-loose whitespace-pre-wrap">
-        <div>
+      <div className="min-w-0 flex-1 break-words p-6 font-mono text-sm leading-loose sm:text-base md:p-8">
+        <div className="flex flex-wrap items-center">
           <span 
             onMouseEnter={() => setActive('method')}
             className={`cursor-pointer transition-colors px-1 rounded ${active === 'method' ? 'bg-pink-500/30 text-pink-300' : 'text-pink-400 hover:bg-slate-800'}`}
@@ -31,7 +31,7 @@ export default function RequestInspector({ glossaryJson }: RequestInspectorProps
           <span className="text-slate-500"> </span>
           <span 
             onMouseEnter={() => setActive('path')}
-            className={`cursor-pointer transition-colors px-1 rounded ${active === 'path' ? 'bg-sky-500/30 text-sky-300' : 'text-sky-400 hover:bg-slate-800'}`}
+            className={`cursor-pointer break-all transition-colors px-1 rounded ${active === 'path' ? 'bg-sky-500/30 text-sky-300' : 'text-sky-400 hover:bg-slate-800'}`}
           >
             /api/v1/users
           </span>
@@ -69,10 +69,10 @@ export default function RequestInspector({ glossaryJson }: RequestInspectorProps
         </div>
       </div>
 
-      <div className="w-full md:w-72 bg-slate-800 border-l border-slate-700 p-6 flex flex-col justify-center min-h-[200px]">
+      <div className="w-full min-w-0 bg-slate-800 border-l border-slate-700 p-6 flex min-h-[200px] flex-col justify-center md:w-[320px]">
         {active ? (
           <div className="animate-fadeIn">
-            <span className={`inline-block px-2 py-1 rounded text-xs font-bold uppercase tracking-widest mb-3 ${
+            <span className={`inline-block rounded px-2 py-1 text-xs font-bold uppercase tracking-[0.08em] mb-3 ${
               active === 'method' ? 'bg-pink-900/50 text-pink-400' :
               active === 'path' ? 'bg-sky-900/50 text-sky-400' :
               active === 'query' ? 'bg-yellow-900/50 text-yellow-400' :

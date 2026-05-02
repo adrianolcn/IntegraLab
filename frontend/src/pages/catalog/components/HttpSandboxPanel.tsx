@@ -151,7 +151,7 @@ export default function HttpSandboxPanel({ missionSlug }: HttpSandboxPanelProps)
   };
 
   return (
-    <div className="w-full glass-panel-elevated rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row mt-8">
+    <div id="sandbox-panel" className="w-full glass-panel-elevated rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row mt-8">
       {/* Configuration Panel */}
       <div className="w-full md:w-1/2 p-6 border-r border-borderSubtle bg-white/50 dark:bg-slate-900/50 flex flex-col">
         <div className="flex justify-between items-start mb-2">

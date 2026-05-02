@@ -58,7 +58,7 @@ export default function InteractiveStatusCodes({ glossaryJson }: InteractiveStat
   return (
     <div className="my-8 rounded-xl border border-borderSubtle bg-surface/50 overflow-hidden shadow-sm">
       {/* Family Tabs */}
-      <div className="flex border-b border-borderSubtle overflow-x-auto">
+      <div className="flex overflow-x-auto border-b border-borderSubtle">
         {families.map((f) => (
           <button
             key={f.id}
@@ -66,7 +66,7 @@ export default function InteractiveStatusCodes({ glossaryJson }: InteractiveStat
               setActiveFamily(f.id);
               setActiveCode(codes[f.id][0].code);
             }}
-            className={`flex-1 py-4 px-6 text-center font-bold tracking-wider transition-colors min-w-[120px] ${
+            className={`min-w-[120px] flex-1 px-6 py-4 text-center font-bold tracking-[0.08em] transition-colors ${
               activeFamily === f.id
                 ? getFamilyColor(f.id) + ' border-b-2 !border-b-current'
                 : 'text-textMuted hover:bg-surface'
@@ -80,19 +80,19 @@ export default function InteractiveStatusCodes({ glossaryJson }: InteractiveStat
 
       <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8">
         {/* Codes List */}
-        <div className="w-full md:w-48 flex flex-row md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0">
+        <div className="flex w-full flex-row gap-2 overflow-x-auto pb-2 md:w-[220px] md:flex-col md:pb-0">
           {activeFamilyCodes.map((c) => (
             <button
               key={c.code}
               onClick={() => setActiveCode(c.code)}
-              className={`px-4 py-3 rounded-lg text-left transition-all border whitespace-nowrap ${
+              className={`min-w-[150px] px-4 py-3 rounded-lg text-left transition-all border whitespace-normal ${
                 activeCode === c.code
                   ? getFamilyColor(activeFamily) + ' shadow-sm'
                   : 'border-transparent text-textMuted hover:bg-surface hover:text-textMain'
               }`}
             >
               <div className="font-mono font-bold text-lg">{c.code}</div>
-              <div className="text-xs truncate max-w-[120px]">{c.title}</div>
+              <div className="text-xs leading-snug break-words">{c.title}</div>
             </button>
           ))}
         </div>

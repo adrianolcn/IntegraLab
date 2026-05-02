@@ -41,13 +41,13 @@ export default function InteractiveRequestAnatomy({ glossaryJson }: InteractiveR
   return (
     <div className="my-8 bg-surface border border-borderSubtle rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row">
       {/* Code Editor Side */}
-      <div className="flex-1 bg-slate-900 text-slate-300 p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+      <div className="flex-1 overflow-hidden bg-slate-900 p-6 font-mono text-sm leading-relaxed text-slate-300">
         <div className="mb-4 text-xs text-slate-500 select-none">
           {t('anatomy.hint', 'Clique nas partes do código para entender:')}
         </div>
         
         {/* Request Line */}
-        <div className="flex gap-2 whitespace-nowrap cursor-pointer">
+        <div className="flex flex-wrap items-center gap-2 cursor-pointer">
           <span 
             className={`font-bold transition-colors ${activePart === 'method' ? 'text-blue-400 bg-blue-400/20 px-1 rounded' : 'text-emerald-400 hover:bg-white/10 px-1 rounded'}`}
             onClick={() => setActivePart('method')}
@@ -65,7 +65,7 @@ export default function InteractiveRequestAnatomy({ glossaryJson }: InteractiveR
 
         {/* Headers */}
         <div 
-          className={`mt-2 pl-4 border-l-2 cursor-pointer transition-colors ${activePart === 'headers' ? 'border-purple-400 bg-purple-400/10' : 'border-slate-700 hover:bg-white/5'}`}
+          className={`mt-2 break-words pl-4 border-l-2 cursor-pointer transition-colors ${activePart === 'headers' ? 'border-purple-400 bg-purple-400/10' : 'border-slate-700 hover:bg-white/5'}`}
           onClick={() => setActivePart('headers')}
         >
           <div className="text-purple-300">Host: <span className="text-slate-400">api.integralab.com</span></div>
@@ -89,7 +89,7 @@ export default function InteractiveRequestAnatomy({ glossaryJson }: InteractiveR
 
         {/* Divider */}
         <div className="my-6 border-t border-slate-700/50 relative">
-          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 px-2 text-xs text-slate-500 uppercase tracking-widest select-none">
+          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 px-2 text-[11px] text-slate-500 tracking-[0.06em] select-none">
             {t('anatomy.serverProcess', 'Servidor Processa...')}
           </span>
         </div>

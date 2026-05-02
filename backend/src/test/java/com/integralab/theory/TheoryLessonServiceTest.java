@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -73,6 +74,6 @@ class TheoryLessonServiceTest {
     @Test
     void testGetLessonsByModuleSlug_NotFound() {
         when(learningModuleRepository.findBySlug("unknown-slug")).thenReturn(Optional.empty());
-        assertThrows(RuntimeException.class, () -> theoryLessonService.getLessonsByModuleSlug("unknown-slug", "en"));
+        assertThrows(NoSuchElementException.class, () -> theoryLessonService.getLessonsByModuleSlug("unknown-slug", "en"));
     }
 }

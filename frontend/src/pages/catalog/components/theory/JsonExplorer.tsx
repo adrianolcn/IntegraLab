@@ -39,7 +39,7 @@ export default function JsonExplorer({ glossaryJson }: JsonExplorerProps) {
 
   return (
     <div className="my-8 bg-surface border border-borderSubtle rounded-xl overflow-hidden shadow-sm flex flex-col lg:flex-row">
-      <div className="flex-1 bg-slate-900 p-8 font-mono text-base md:text-lg select-none">
+      <div className="min-w-0 flex-1 overflow-x-auto bg-slate-900 p-6 font-mono text-sm select-none sm:p-8 md:text-lg">
         <div className="mb-6 text-xs text-slate-500 font-sans">
           {t('json.hint', 'Clique nas partes do JSON para entender a anatomia:')}
         </div>
@@ -51,20 +51,20 @@ export default function JsonExplorer({ glossaryJson }: JsonExplorerProps) {
           <span className="text-amber-200">{"{"}</span>
         </div>
         
-        <div className="pl-8 my-2">
-          <div className="flex items-center">
+        <div className="my-2 pl-4 sm:pl-8">
+          <div className="flex flex-wrap items-start gap-y-1">
             <span 
               className={`cursor-pointer transition-colors p-1 rounded ${activeItem === 'key' ? 'bg-white/20' : 'hover:bg-white/10'}`}
               onClick={() => setActiveItem('key')}
             >
               <span className="text-pink-400">"name"</span>
             </span>
-            <span className="text-amber-200 mx-1">:</span>
+            <span className="mx-1 text-amber-200">:</span>
             <span 
               className={`cursor-pointer transition-colors p-1 rounded ${activeItem === 'string' ? 'bg-white/20' : 'hover:bg-white/10'}`}
               onClick={() => setActiveItem('string')}
             >
-              <span className="text-green-400">"Produto Demo"</span>
+              <span className="break-all text-green-400">"Produto Demo"</span>
             </span>
             <span 
               className={`cursor-pointer transition-colors p-1 rounded ${activeItem === 'comma' ? 'bg-white/20 text-red-400' : 'hover:bg-white/10 text-amber-200'}`}
@@ -74,14 +74,14 @@ export default function JsonExplorer({ glossaryJson }: JsonExplorerProps) {
             </span>
           </div>
 
-          <div className="flex items-center mt-2">
+          <div className="mt-2 flex flex-wrap items-start gap-y-1">
             <span 
               className={`cursor-pointer transition-colors p-1 rounded ${activeItem === 'key' ? 'bg-white/20' : 'hover:bg-white/10'}`}
               onClick={() => setActiveItem('key')}
             >
               <span className="text-pink-400">"price"</span>
             </span>
-            <span className="text-amber-200 mx-1">:</span>
+            <span className="mx-1 text-amber-200">:</span>
             <span 
               className={`cursor-pointer transition-colors p-1 rounded ${activeItem === 'number' ? 'bg-white/20' : 'hover:bg-white/10'}`}
               onClick={() => setActiveItem('number')}
@@ -96,14 +96,14 @@ export default function JsonExplorer({ glossaryJson }: JsonExplorerProps) {
             </span>
           </div>
 
-          <div className="flex items-center mt-2">
+          <div className="mt-2 flex flex-wrap items-start gap-y-1">
             <span 
               className={`cursor-pointer transition-colors p-1 rounded ${activeItem === 'key' ? 'bg-white/20' : 'hover:bg-white/10'}`}
               onClick={() => setActiveItem('key')}
             >
               <span className="text-pink-400">"active"</span>
             </span>
-            <span className="text-amber-200 mx-1">:</span>
+            <span className="mx-1 text-amber-200">:</span>
             <span 
               className={`cursor-pointer transition-colors p-1 rounded ${activeItem === 'boolean' ? 'bg-white/20' : 'hover:bg-white/10'}`}
               onClick={() => setActiveItem('boolean')}
@@ -121,13 +121,13 @@ export default function JsonExplorer({ glossaryJson }: JsonExplorerProps) {
         </div>
       </div>
 
-      <div className="flex-1 p-8 bg-surface flex flex-col justify-center">
+      <div className="min-w-0 flex-1 bg-surface p-6 sm:p-8 flex flex-col justify-center">
         {activeItem ? (
-          <div className="animate-fadeIn">
-            <h3 className="text-2xl font-black text-textMain mb-4 flex items-center gap-3">
+          <div className="animate-fadeIn min-w-0">
+            <h3 className="mb-4 flex items-center gap-3 break-words text-2xl font-black text-textMain">
               {items[activeItem].title}
             </h3>
-            <p className="text-textMain/90 leading-relaxed text-lg bg-slate-50 dark:bg-slate-900/50 p-6 rounded-lg border border-borderSubtle">
+            <p className="rounded-lg border border-borderSubtle bg-slate-50 p-5 text-base leading-relaxed text-textMain/90 break-words dark:bg-slate-900/50 sm:p-6 sm:text-lg">
               <ConceptText text={items[activeItem].desc} glossaryJson={glossaryJson} />
             </p>
           </div>

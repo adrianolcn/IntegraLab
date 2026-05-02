@@ -27,17 +27,17 @@ export default function HeaderBodyComparator({ glossaryJson }: HeaderBodyCompara
           </div>
         </div>
         
-        <h3 className="text-xl font-black text-indigo-700 dark:text-indigo-400 mb-2 uppercase tracking-wider flex items-center gap-2">
+        <h3 className="mb-2 flex items-center gap-2 text-xl font-black tracking-[0.06em] text-indigo-700 dark:text-indigo-400">
           {t('hbc.header.title', '{{Header}} (O Envelope)')}
         </h3>
         <p className="text-sm text-textMain/80 leading-relaxed mb-4">
           <ConceptText text={t('hbc.header.desc', 'Metadados invisíveis da requisição. Não carrega a "mensagem" principal, mas sim as configurações logísticas de como essa mensagem deve ser tratada.')} glossaryJson={glossaryJson} />
         </p>
         
-        <div className="space-y-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-3 rounded">
-          <div className="text-emerald-600 dark:text-emerald-400">Authorization: Bearer xyz</div>
-          <div className="text-indigo-600 dark:text-indigo-400">Content-Type: application/json</div>
-          <div className="text-slate-600 dark:text-slate-400">User-Agent: Mozilla/5.0</div>
+        <div className="space-y-2 rounded bg-slate-100 p-3 text-xs font-mono dark:bg-slate-900">
+          <div className="break-all text-emerald-600 dark:text-emerald-400">Authorization: Bearer xyz</div>
+          <div className="break-all text-indigo-600 dark:text-indigo-400">Content-Type: application/json</div>
+          <div className="break-all text-slate-600 dark:text-slate-400">User-Agent: Mozilla/5.0</div>
         </div>
       </div>
 
@@ -54,7 +54,7 @@ export default function HeaderBodyComparator({ glossaryJson }: HeaderBodyCompara
           </div>
         </div>
         
-        <h3 className="text-xl font-black text-amber-700 dark:text-amber-400 mb-2 uppercase tracking-wider flex items-center gap-2">
+        <h3 className="mb-2 flex items-center gap-2 text-xl font-black tracking-[0.06em] text-amber-700 dark:text-amber-400">
           {t('hbc.body.title', '{{Body}} (A Carta)')}
         </h3>
         <p className="text-sm text-textMain/80 leading-relaxed mb-4">

@@ -93,7 +93,7 @@ export default function ErrorTriageCards({ glossaryJson }: ErrorTriageCardsProps
   return (
     <div className="my-8 bg-surface border border-borderSubtle rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row">
       <div className="w-full md:w-64 bg-slate-100 dark:bg-slate-900 border-r border-borderSubtle p-4 h-64 md:h-auto overflow-y-auto">
-        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 px-2">Catálogo de Erros</h4>
+        <h4 className="mb-4 px-2 text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Catálogo de Erros</h4>
         <div className="flex flex-col gap-1">
           {errors.map(err => (
             <button
@@ -108,7 +108,7 @@ export default function ErrorTriageCards({ glossaryJson }: ErrorTriageCardsProps
               <span className={`font-mono font-black ${
                 err.code.startsWith('4') ? 'text-orange-500' : 'text-red-500'
               }`}>{err.code}</span>
-              <span className="truncate">{err.label}</span>
+              <span className="min-w-0 break-words leading-snug">{err.label}</span>
             </button>
           ))}
         </div>
@@ -116,12 +116,12 @@ export default function ErrorTriageCards({ glossaryJson }: ErrorTriageCardsProps
       
       <div className="flex-1 p-6 md:p-8">
         <div className="mb-6">
-          <span className={`inline-block px-3 py-1 rounded text-xs font-bold uppercase tracking-widest mb-3 ${
+          <span className={`mb-3 inline-block rounded px-3 py-1 text-xs font-bold uppercase tracking-[0.08em] ${
             activeCode.startsWith('4') ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
           }`}>
             {errors.find(e => e.code === activeCode)?.type}
           </span>
-          <h3 className="text-3xl font-black text-textMain mb-4 flex items-center gap-3">
+          <h3 className="mb-4 flex flex-wrap items-center gap-3 text-3xl font-black text-textMain">
             <span className={activeCode.startsWith('4') ? 'text-orange-500' : 'text-red-500'}>{activeCode}</span>
             {errors.find(e => e.code === activeCode)?.label}
           </h3>
@@ -144,8 +144,8 @@ export default function ErrorTriageCards({ glossaryJson }: ErrorTriageCardsProps
             <p className="text-sm text-emerald-900 dark:text-emerald-200"><ConceptText text={active.fix} glossaryJson={glossaryJson} /></p>
           </div>
           <div className="bg-slate-900 rounded-lg p-4 border border-slate-700 md:col-span-2 font-mono text-sm">
-            <span className="block text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-widest">Exemplo Prático</span>
-            <p className="text-slate-300">{active.example}</p>
+            <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">Exemplo Prático</span>
+            <p className="break-words text-slate-300">{active.example}</p>
           </div>
         </div>
       </div>

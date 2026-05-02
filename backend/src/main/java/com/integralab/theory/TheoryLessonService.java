@@ -7,6 +7,7 @@ import com.integralab.tracks.MissionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -36,14 +37,14 @@ public class TheoryLessonService {
     public List<TheoryLessonDto> getLessonsByModuleSlug(String slug, String language) {
         Optional<LearningModule> moduleOpt = learningModuleRepository.findBySlug(slug);
         if (moduleOpt.isEmpty()) {
-            throw new RuntimeException("Module not found with slug: " + slug);
+            throw new NoSuchElementException("Module not found with slug: " + slug);
         }
         return getLessonsByModuleId(moduleOpt.get().getId(), language);
     }
 
     public TheoryLessonDto getLessonById(UUID id, String language) {
         TheoryLesson lesson = theoryLessonRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lesson not found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Lesson not found with id: " + id));
         return mapToDto(lesson, language);
     }
 

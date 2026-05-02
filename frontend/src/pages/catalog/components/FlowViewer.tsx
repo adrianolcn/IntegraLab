@@ -1,68 +1,420 @@
-import { useState, useEffect, useMemo } from 'react';
-import { ReactFlow, Background, Controls, MarkerType } from '@xyflow/react';
-import type { Node, Edge } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import { useTheme } from '../../../contexts/ThemeContext';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import FlowControls from './theory/FlowControls';
 
 interface FlowViewerProps {
   scenario: any;
 }
 
-export default function FlowViewer({ scenario }: FlowViewerProps) {
-  const { theme } = useTheme();
-  const { t } = useTranslation();
+interface ScenarioNode {
+  nodeKey: string;
+  label: string;
+  nodeType?: string;
+}
 
+interface ScenarioStep {
+  fromNodeKey: string;
+  toNodeKey: string;
+  stepType?: string;
+  status?: string;
+  method?: string | null;
+  path?: string | null;
+  statusCode?: number | null;
+  logMessage?: string | null;
+  payloadExample?: string | null;
+  responseExample?: string | null;
+  orderIndex?: number;
+}
+
+interface DiagramStage {
+  id: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  tone: 'client' | 'request' | 'endpoint' | 'api' | 'service' | 'database' | 'response' | 'ui';
+}
+
+function parseStructuredValue(value: unknown) {
+  if (value == null) return null;
+  if (typeof value !== 'string') return value;
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function toPrettyPayload(value: unknown) {
+  if (value == null) return null;
+  if (typeof value === 'string') return value;
+  return JSON.stringify(value, null, 2);
+}
+
+function getStatusText(statusCode?: number | null) {
+  if (!statusCode) return 'Pending';
+  if (statusCode >= 500) return 'Server Error';
+  if (statusCode >= 400) return 'Client Error';
+  if (statusCode >= 300) return 'Redirect';
+  if (statusCode >= 200) return 'OK';
+  return 'Info';
+}
+
+function normalizeText(value?: string | null) {
+  return (value ?? '').toLowerCase();
+}
+
+function getToneUi(tone: DiagramStage['tone'], state: 'active' | 'completed' | 'upcoming') {
+  const tones = {
+    client: {
+      active: 'border-sky-300 bg-sky-50 text-sky-950 dark:border-sky-700/70 dark:bg-sky-950/35 dark:text-sky-50',
+      completed: 'border-sky-200 bg-white text-textMain dark:border-sky-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-sky-500 text-white',
+      soft: 'bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-200',
+    },
+    request: {
+      active: 'border-blue-300 bg-blue-50 text-blue-950 dark:border-blue-700/70 dark:bg-blue-950/35 dark:text-blue-50',
+      completed: 'border-blue-200 bg-white text-textMain dark:border-blue-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-blue-500 text-white',
+      soft: 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-200',
+    },
+    endpoint: {
+      active: 'border-indigo-300 bg-indigo-50 text-indigo-950 dark:border-indigo-700/70 dark:bg-indigo-950/35 dark:text-indigo-50',
+      completed: 'border-indigo-200 bg-white text-textMain dark:border-indigo-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-indigo-500 text-white',
+      soft: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-200',
+    },
+    api: {
+      active: 'border-violet-300 bg-violet-50 text-violet-950 dark:border-violet-700/70 dark:bg-violet-950/35 dark:text-violet-50',
+      completed: 'border-violet-200 bg-white text-textMain dark:border-violet-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-violet-500 text-white',
+      soft: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-200',
+    },
+    service: {
+      active: 'border-cyan-300 bg-cyan-50 text-cyan-950 dark:border-cyan-700/70 dark:bg-cyan-950/35 dark:text-cyan-50',
+      completed: 'border-cyan-200 bg-white text-textMain dark:border-cyan-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-cyan-500 text-white',
+      soft: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-200',
+    },
+    database: {
+      active: 'border-lime-300 bg-lime-50 text-lime-950 dark:border-lime-700/70 dark:bg-lime-950/35 dark:text-lime-50',
+      completed: 'border-lime-200 bg-white text-textMain dark:border-lime-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-lime-500 text-white',
+      soft: 'bg-lime-100 text-lime-700 dark:bg-lime-950/50 dark:text-lime-200',
+    },
+    response: {
+      active: 'border-emerald-300 bg-emerald-50 text-emerald-950 dark:border-emerald-700/70 dark:bg-emerald-950/35 dark:text-emerald-50',
+      completed: 'border-emerald-200 bg-white text-textMain dark:border-emerald-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-emerald-500 text-white',
+      soft: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200',
+    },
+    ui: {
+      active: 'border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-700/70 dark:bg-amber-950/35 dark:text-amber-50',
+      completed: 'border-amber-200 bg-white text-textMain dark:border-amber-900/40 dark:bg-slate-900/90',
+      upcoming: 'border-borderSubtle bg-slate-50/80 text-textMain/80 dark:bg-slate-900/60',
+      accent: 'bg-amber-500 text-white',
+      soft: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-200',
+    },
+  } as const;
+
+  return tones[tone][state];
+}
+
+function getStageImportance(stage: DiagramStage, statusCode: number, t: (key: string, fallback: string) => string) {
+  switch (stage.tone) {
+    case 'client':
+      return t('flow.importanceClient', 'É aqui que a intenção da pessoa usuária vira uma ação técnica. Se o ponto de partida estiver errado, todo o resto nasce desalinhado.');
+    case 'request':
+      return t('flow.importanceRequest', 'Método, headers e body definidos aqui mudam o comportamento da API. Esta etapa costuma explicar por que um cenário deu certo ou falhou cedo.');
+    case 'endpoint':
+      return t('flow.importanceEndpoint', 'O endpoint é o endereço da conversa. Se o caminho estiver errado, a requisição nem alcança a lógica que o aluno espera testar.');
+    case 'api':
+      return t('flow.importanceApi', 'A API é a porta de entrada: recebe, valida, autentica e escolhe quem vai continuar o processamento.');
+    case 'service':
+      return t('flow.importanceService', 'A regra de negócio é onde a missão realmente decide o destino da requisição. Aqui surgem validações, permissões e decisões de resposta.');
+    case 'database':
+      return t('flow.importanceDatabase', 'Quando há banco, esta etapa mostra que a resposta final depende do estado real dos dados e não só da forma da request.');
+    case 'response':
+      return statusCode >= 400
+        ? t('flow.importanceResponseError', 'O response deixa visível o ponto de ruptura. O status code e o payload contam a história do erro sem precisar adivinhar.')
+        : t('flow.importanceResponseSuccess', 'O response é a tradução final do processamento em um pacote técnico legível para o cliente.');
+    case 'ui':
+      return t('flow.importanceUi', 'A interface é onde o resultado técnico ganha significado para a pessoa usuária: sucesso, erro, bloqueio ou ausência de dados.');
+    default:
+      return t('flow.importanceDefault', 'Esta etapa explica como a requisição avança até virar um resultado observável.');
+  }
+}
+
+function getScenarioEffect(step: ScenarioStep | null, statusCode: number, stage: DiagramStage | undefined, t: (key: string, fallback: string) => string) {
+  if (!step || !stage) {
+    return t('flow.effectBeforeStart', 'Antes de iniciar, a simulação mostra a rota completa para o aluno entender o terreno que a requisição vai percorrer.');
+  }
+
+  if (statusCode >= 400) {
+    return step.logMessage
+      ? `${t('flow.effectErrorPrefix', 'Neste cenário, o efeito principal aparece aqui:')} ${step.logMessage}`
+      : t('flow.effectErrorGeneric', 'Neste cenário, a jornada muda antes do final porque a API rejeita ou interrompe a requisição nesta fase.');
+  }
+
+  if (stage.tone === 'response' || stage.tone === 'ui') {
+    return t('flow.effectSuccessEnd', 'Neste cenário, a jornada completou o percurso e o aluno já consegue enxergar o efeito final da chamada.');
+  }
+
+  return t('flow.effectSuccessProgress', 'Neste cenário, esta etapa prepara a próxima transição do fluxo sem causar ruptura na requisição.');
+}
+
+export default function FlowViewer({ scenario }: FlowViewerProps) {
+  const { t } = useTranslation();
   const [currentStepIndex, setCurrentStepIndex] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1500);
 
-  const steps = scenario?.steps || [];
+  const scenarioNodes = useMemo<ScenarioNode[]>(
+    () => (Array.isArray(scenario?.nodes) ? scenario.nodes : []),
+    [scenario?.nodes]
+  );
 
-  // Playback timer with cleanup
+  const steps = useMemo<ScenarioStep[]>(
+    () =>
+      (Array.isArray(scenario?.steps) ? [...scenario.steps] : []).sort(
+        (a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)
+      ),
+    [scenario?.steps]
+  );
+
+  const initialRequest = useMemo(
+    () => parseStructuredValue(scenario?.initialRequestJson),
+    [scenario?.initialRequestJson]
+  );
+
+  const simulatedResponse = useMemo(
+    () => parseStructuredValue(scenario?.simulatedResponseJson),
+    [scenario?.simulatedResponseJson]
+  );
+
   useEffect(() => {
-    let timer: any;
+    setCurrentStepIndex(-1);
+    setIsPlaying(false);
+  }, [scenario?.id]);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
     if (isPlaying && currentStepIndex < steps.length) {
       timer = setTimeout(() => {
         if (currentStepIndex < steps.length - 1) {
-          setCurrentStepIndex(prev => prev + 1);
+          setCurrentStepIndex((prev) => prev + 1);
         } else {
+          setCurrentStepIndex(steps.length);
           setIsPlaying(false);
-          setCurrentStepIndex(steps.length); // Finished
         }
       }, playbackSpeed);
-    } else if (isPlaying && currentStepIndex >= steps.length) {
-      setIsPlaying(false);
     }
-    
-    return () => clearTimeout(timer); // cleanup timer on unmount or re-render
-  }, [isPlaying, currentStepIndex, steps.length, playbackSpeed]);
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [currentStepIndex, isPlaying, playbackSpeed, steps.length]);
+
+  const diagram = useMemo(() => {
+    if (!scenario) {
+      return { stages: [] as DiagramStage[], statusCode: 200 };
+    }
+
+    const firstStep = steps[0];
+    const lastStep = steps[steps.length - 1];
+    const method = firstStep?.method || (initialRequest as any)?.method || 'GET';
+    const path = firstStep?.path || (initialRequest as any)?.path || '/resource';
+    const finalStatusCode =
+      lastStep?.statusCode ||
+      (simulatedResponse as any)?.status ||
+      (lastStep?.status === 'FAILED' ? 400 : 200);
+
+    const joinedNodeText = scenarioNodes
+      .map((node) => `${normalizeText(node.nodeKey)} ${normalizeText(node.label)} ${normalizeText(node.nodeType)}`)
+      .join(' ');
+    const joinedStepText = steps
+      .map((step) => `${normalizeText(step.path)} ${normalizeText(step.logMessage)} ${normalizeText(step.stepType)}`)
+      .join(' ');
+
+    const findNodeLabel = (matchers: string[]) =>
+      scenarioNodes.find((node) => {
+        const haystack = `${normalizeText(node.nodeKey)} ${normalizeText(node.label)} ${normalizeText(node.nodeType)}`;
+        return matchers.some((matcher) => haystack.includes(matcher));
+      })?.label;
+
+    const hasDatabase =
+      /database| banco| db|repository|repositorio|repositório/.test(joinedNodeText) ||
+      (
+        !/auth|token|secure|dashboard|gateway|\/me/.test(`${normalizeText(path)} ${joinedStepText}`) &&
+        /products|produtos|items|itens|users|usuarios|usuários|catalog|catálogo|data|dados|orders|pedidos/.test(
+          `${normalizeText(path)} ${joinedStepText}`
+        )
+      );
+
+    const clientTitle = findNodeLabel(['client', 'browser', 'spa', 'app', 'mobile', 'computador']) || t('flow.clientNode', 'Seu computador');
+    const apiTitle = findNodeLabel(['gateway', 'api']) || t('flow.apiNode', 'API');
+    const serviceTitle =
+      findNodeLabel(['service', 'servico', 'serviço', 'validator', 'validador', 'interno']) ||
+      t('flow.serviceNode', 'Serviço / regra');
+    const databaseTitle =
+      findNodeLabel(['database', 'banco', 'db', 'repository', 'repositorio', 'repositório']) ||
+      t('flow.databaseNode', 'Banco de dados');
+
+    const uiTitle =
+      finalStatusCode >= 400
+        ? t('flow.uiErrorNode', 'Erro exibido na interface')
+        : t('flow.uiNode', 'Resultado na interface');
+
+    const requestLabel = `${method} ${path}`;
+    const responseLabel = `${finalStatusCode} ${getStatusText(finalStatusCode)}`;
+
+    const stages: DiagramStage[] = [
+      {
+        id: 'client',
+        badge: t('flow.client', 'Cliente'),
+        title: clientTitle,
+        subtitle: t('flow.requestOrigin', 'Origem da requisição'),
+        description: t('flow.clientDescription', 'A pessoa usuária inicia a ação e dispara a conversa HTTP.'),
+        tone: 'client',
+      },
+      {
+        id: 'request',
+        badge: t('flow.request', 'Request'),
+        title: requestLabel,
+        subtitle: t('flow.outgoingRequest', 'O pacote sai do cliente'),
+        description: t('flow.requestDescription', 'Método, caminho, headers e body formam a requisição que vai viajar pela arquitetura.'),
+        tone: 'request',
+      },
+      {
+        id: 'endpoint',
+        badge: t('flow.path', 'Endpoint'),
+        title: path,
+        subtitle: t('flow.endpointSubtitle', 'O endereço chamado'),
+        description: t('flow.endpointDescription', 'A request acerta uma rota específica e pede entrada naquele caminho.'),
+        tone: 'endpoint',
+      },
+      {
+        id: 'api',
+        badge: t('flow.api', 'API'),
+        title: apiTitle,
+        subtitle: t('flow.apiSubtitle', 'Camada de entrada'),
+        description: t('flow.apiDescription', 'A API recebe, interpreta e encaminha o pedido para a camada correta.'),
+        tone: 'api',
+      },
+      {
+        id: 'service',
+        badge: t('flow.service', 'Serviço'),
+        title: serviceTitle,
+        subtitle: t('flow.serviceSubtitle', 'Regra de negócio'),
+        description: t('flow.serviceDescription', 'A lógica decide o que fazer com a chamada e qual resposta faz sentido produzir.'),
+        tone: 'service',
+      },
+      ...(hasDatabase
+        ? [
+            {
+              id: 'database',
+              badge: t('flow.database', 'Banco'),
+              title: databaseTitle,
+              subtitle: t('flow.databaseSubtitle', 'Consulta ou persistência'),
+              description: t('flow.databaseDescription', 'Quando necessário, a missão toca nos dados para completar a resposta.'),
+              tone: 'database' as const,
+            },
+          ]
+        : []),
+      {
+        id: 'response',
+        badge: t('flow.response', 'Response'),
+        title: responseLabel,
+        subtitle: t('flow.responseSubtitle', 'Retorno técnico gerado'),
+        description: t('flow.responseDescription', 'O servidor monta o status code e o payload que voltarão para o cliente.'),
+        tone: 'response',
+      },
+      {
+        id: 'ui',
+        badge: t('flow.result', 'Interface'),
+        title: uiTitle,
+        subtitle: finalStatusCode >= 400 ? t('flow.resultError', 'O aluno enxerga o erro') : t('flow.resultSuccess', 'O aluno enxerga o resultado'),
+        description: t('flow.uiDescription', 'A interface traduz o resultado técnico em algo compreensível para a pessoa usuária.'),
+        tone: 'ui',
+      },
+    ];
+
+    return { stages, statusCode: finalStatusCode };
+  }, [initialRequest, scenario, scenarioNodes, simulatedResponse, steps, t]);
+
+  const isFinished = steps.length > 0 && currentStepIndex >= steps.length;
+  const currentStepData =
+    currentStepIndex >= 0 && currentStepIndex < steps.length ? steps[currentStepIndex] : null;
+  const focusedStep = currentStepData || (isFinished ? steps[steps.length - 1] : null);
+
+  const stageStepMap = useMemo(() => {
+    if (diagram.stages.length === 0 || steps.length === 0) return [];
+    const lastStageIndex = Math.max(diagram.stages.length - 1, 1);
+
+    return diagram.stages.map((_, index) => {
+      if (index === 0) return 0;
+      if (index === lastStageIndex) return steps.length - 1;
+      return Math.min(steps.length - 1, Math.max(0, Math.round((index / lastStageIndex) * (steps.length - 1))));
+    });
+  }, [diagram.stages, steps.length]);
+
+  const currentStageIndex = useMemo(() => {
+    if (diagram.stages.length === 0) return -1;
+    if (currentStepIndex === -1) return 0;
+    if (isFinished) return diagram.stages.length - 1;
+    if (steps.length === 0) return 0;
+
+    const lastStageIndex = Math.max(diagram.stages.length - 1, 1);
+    return Math.min(
+      diagram.stages.length - 1,
+      Math.max(0, Math.round(((currentStepIndex + 1) / steps.length) * lastStageIndex))
+    );
+  }, [currentStepIndex, diagram.stages.length, isFinished, steps.length]);
+
+  const activeStage = currentStageIndex >= 0 ? diagram.stages[currentStageIndex] : undefined;
+  const activeStatusCode = focusedStep?.statusCode ?? diagram.statusCode;
+  const requestPreview = toPrettyPayload(
+    focusedStep?.payloadExample ? parseStructuredValue(focusedStep.payloadExample) : initialRequest
+  );
+  const responsePreview = toPrettyPayload(
+    focusedStep?.responseExample ? parseStructuredValue(focusedStep.responseExample) : simulatedResponse
+  );
 
   const handlePlayPause = () => {
-    if (currentStepIndex >= steps.length) {
+    if (steps.length === 0) return;
+
+    if (currentStepIndex === -1 || currentStepIndex >= steps.length) {
       setCurrentStepIndex(0);
       setIsPlaying(true);
-    } else if (currentStepIndex === -1) {
-      setCurrentStepIndex(0);
-      setIsPlaying(true);
-    } else {
-      setIsPlaying(!isPlaying);
+      return;
     }
+
+    setIsPlaying((prev) => !prev);
   };
 
   const handleRestart = () => {
+    if (steps.length === 0) return;
     setCurrentStepIndex(0);
     setIsPlaying(true);
   };
 
   const handlePrev = () => {
     setIsPlaying(false);
-    setCurrentStepIndex(prev => Math.max(0, prev - 1));
+    setCurrentStepIndex((prev) => (prev <= 0 ? 0 : prev - 1));
   };
 
   const handleNext = () => {
     setIsPlaying(false);
-    setCurrentStepIndex(prev => Math.min(steps.length, prev + 1));
+    setCurrentStepIndex((prev) => Math.min(steps.length, prev + 1));
   };
 
   const handleJumpToStep = (index: number) => {
@@ -70,243 +422,371 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
     setCurrentStepIndex(index);
   };
 
-  const nodes: Node[] = useMemo(() => {
-    if (!scenario || !scenario.nodes) return [];
-    
-    const activeStep = (currentStepIndex >= 0 && currentStepIndex < steps.length) ? steps[currentStepIndex] : null;
+  const handleJumpToStage = (stageIndex: number) => {
+    if (steps.length === 0) return;
+    setIsPlaying(false);
+    setCurrentStepIndex(stageStepMap[stageIndex] ?? 0);
+  };
 
-    return scenario.nodes.map((n: any) => {
-      const isActiveSource = activeStep?.fromNodeKey === n.nodeKey;
-      const isActiveTarget = activeStep?.toNodeKey === n.nodeKey;
-      const isHighlighted = isActiveSource || isActiveTarget;
-
-      return {
-        id: n.nodeKey,
-        position: { x: n.positionX, y: n.positionY },
-        data: { label: n.label },
-        style: {
-          background: theme === 'dark' ? (isHighlighted ? '#1e3a8a' : '#1e293b') : (isHighlighted ? '#eff6ff' : '#ffffff'),
-          color: theme === 'dark' ? '#e2e8f0' : '#1e293b',
-          border: isHighlighted ? '2px solid #3b82f6' : '1px solid #94a3b8',
-          borderRadius: '8px',
-          padding: '10px',
-          fontWeight: 'bold',
-          boxShadow: isHighlighted ? (theme === 'dark' ? '0 0 15px rgba(59,130,246,0.5)' : '0 0 15px rgba(59,130,246,0.3)') : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-          transition: 'all 0.3s ease'
-        }
-      };
-    });
-  }, [scenario, theme, currentStepIndex, steps]);
-
-  const edges: Edge[] = useMemo(() => {
-    if (!steps) return [];
-
-    return steps.map((s: any, idx: number) => {
-      const isPast = idx < currentStepIndex;
-      const isCurrent = idx === currentStepIndex;
-      
-      let strokeColor = theme === 'dark' ? '#475569' : '#cbd5e1'; // neutral
-      if (isCurrent) strokeColor = '#3b82f6'; // blue
-      else if (isPast) {
-        if (s.statusCode >= 400) strokeColor = '#ef4444'; // red for error
-        else strokeColor = '#10b981'; // green for success
-      }
-
-      return {
-        id: `e${idx}`,
-        source: s.fromNodeKey,
-        target: s.toNodeKey,
-        animated: isCurrent, // only animate current
-        label: s.method ? `${s.method} ${s.path || ''}` : `Status ${s.statusCode || ''}`,
-        style: { 
-          stroke: strokeColor, 
-          strokeWidth: isCurrent ? 3 : 2,
-          transition: 'stroke 0.3s ease'
-        },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: strokeColor,
-        },
-        labelStyle: { fill: theme === 'dark' ? '#e2e8f0' : '#1e293b', fontWeight: isCurrent ? 'bold' : 'normal' },
-        labelBgStyle: { fill: theme === 'dark' ? '#1e293b' : '#ffffff', fillOpacity: 0.8 }
-      };
-    });
-  }, [steps, currentStepIndex, theme]);
-
-  if (!scenario || !scenario.nodes) return null;
-
-  const currentStepData = (currentStepIndex >= 0 && currentStepIndex < steps.length) ? steps[currentStepIndex] : null;
+  if (!scenario) return null;
 
   return (
-    <div className="w-full glass-panel-elevated rounded-xl overflow-hidden shadow-sm flex flex-col">
-      {/* Top Diagram Area */}
-      <div className="h-[400px] sm:h-[500px] w-full relative border-b border-slate-200 dark:border-slate-700/50">
-        <ReactFlow nodes={nodes} edges={edges} fitView colorMode={theme === 'dark' ? 'dark' : 'light'}>
-          <Background />
-          <Controls />
-        </ReactFlow>
-        
-        {/* Floating Playback Controls Overlay */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-slate-200 dark:border-slate-600 flex items-center gap-2">
-          <button onClick={handlePrev} disabled={currentStepIndex <= 0} className="p-2 text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400 disabled:opacity-30" title={t('flow.previousStep')}>
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
-          </button>
-          
-          <button onClick={handlePlayPause} className="w-10 h-10 flex items-center justify-center bg-primary-600 text-white rounded-full hover:bg-primary-500 shadow-md transition-colors" title={isPlaying ? t('flow.pause') : t('flow.run')}>
-            {isPlaying ? (
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
-            ) : (
-              <svg className="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd"/></svg>
-            )}
-          </button>
-          
-          <button onClick={handleRestart} className="p-2 text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400" title={t('flow.restart')}>
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          </button>
-          
-          <button onClick={handleNext} disabled={currentStepIndex >= steps.length} className="p-2 text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-400 disabled:opacity-30" title={t('flow.nextStep')}>
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
-          </button>
-          
-          <div className="h-6 w-px bg-slate-300 dark:bg-slate-600 mx-1"></div>
-          
-          <select 
-            value={playbackSpeed} 
-            onChange={(e) => setPlaybackSpeed(Number(e.target.value))}
-            className="bg-transparent text-sm font-medium text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-            title={t('flow.speed')}
-          >
-            <option value={3000}>0.5x</option>
-            <option value={1500}>1x</option>
-            <option value={750}>2x</option>
-          </select>
+    <div className="w-full overflow-hidden rounded-3xl border border-borderSubtle bg-white shadow-sm dark:bg-slate-950/50">
+      <div className="border-b border-borderSubtle bg-gradient-to-br from-slate-50 via-white to-slate-100/70 px-6 py-6 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900/70">
+        <div className="flex flex-col gap-5">
+          <div className="space-y-2">
+            <span className="inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-primary-700 dark:border-primary-700/40 dark:bg-primary-950/30 dark:text-primary-200">
+              {t('flow.guidedMissionSimulation', 'Simulação guiada da missão')}
+            </span>
+            <h3 className="break-words text-xl font-black text-textMain">
+              {scenario.title || t('flow.timeline', 'Jornada da requisição')}
+            </h3>
+            <p className="max-w-3xl text-sm leading-relaxed text-textMuted">
+              {scenario.description || t('flow.didacticSummary', 'Acompanhe o percurso da chamada HTTP como uma jornada orientada, sem depender de um canvas técnico aberto.')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
+            <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
+              <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.method', 'Método')}</div>
+              <div className="mt-1 text-sm font-black text-textMain">{steps[0]?.method || (initialRequest as any)?.method || 'GET'}</div>
+            </div>
+            <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
+              <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.path', 'Caminho')}</div>
+              <div className="mt-1 break-all font-mono text-sm font-black text-textMain" title={steps[0]?.path || (initialRequest as any)?.path || '/resource'}>
+                {steps[0]?.path || (initialRequest as any)?.path || '/resource'}
+              </div>
+            </div>
+            <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
+              <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.statusExpected', 'Status esperado')}</div>
+              <div className={`mt-1 break-words text-sm font-black ${diagram.statusCode >= 400 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                {diagram.statusCode} {getStatusText(diagram.statusCode)}
+              </div>
+            </div>
+            <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
+              <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.currentStage', 'Etapa atual')}</div>
+              <div className="mt-1 break-words text-sm font-black text-textMain">
+                {activeStage?.badge || t('flow.readyToStart', 'Pronto para iniciar')}
+              </div>
+            </div>
+            <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
+              <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.currentScenario', 'Leitura do cenário')}</div>
+              <div className="mt-1 break-words text-sm font-black text-textMain">
+                {isFinished
+                  ? t('flow.finished', 'Fluxo concluído')
+                  : currentStepIndex >= 0
+                    ? `${t('mission.step', 'Passo')} ${currentStepIndex + 1} ${t('mission.of', 'de')} ${steps.length}`
+                    : t('flow.waiting', 'Aguardando')}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Layout: Timeline + Inspect Panel */}
-      <div className="flex flex-col md:flex-row min-h-[300px]">
-        
-        {/* Timeline Sidebar */}
-        <div className="w-full md:w-1/3 border-r border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-900/30 p-4 overflow-y-auto max-h-[300px] md:max-h-full">
-          <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">{t('flow.timeline')}</h4>
-          <div className="space-y-2 relative">
-            <div className="absolute left-[11px] top-2 bottom-4 w-0.5 bg-slate-200 dark:bg-slate-700 z-0"></div>
-            {steps.map((s: any, idx: number) => {
-              const isActive = idx === currentStepIndex;
-              const isPast = idx < currentStepIndex || currentStepIndex === steps.length;
-              const isError = s.statusCode >= 400;
-              
-              let markerColor = 'bg-slate-300 dark:bg-slate-600 border-slate-200 dark:border-slate-700';
-              if (isActive) markerColor = 'bg-primary-500 border-primary-200 dark:border-primary-800 shadow-[0_0_8px_rgba(59,130,246,0.8)]';
-              else if (isPast) markerColor = isError ? 'bg-red-500 border-red-200 dark:border-red-800' : 'bg-emerald-500 border-emerald-200 dark:border-emerald-800';
+      <div className="border-b border-borderSubtle bg-white/90 px-6 py-5 dark:bg-slate-950/40">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-indigo-600 dark:text-indigo-300">
+              {t('flow.stepThroughJourney', 'Percorra a jornada')}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-textMuted">
+              {t('flow.stepThroughJourneyDescription', 'Use os controles para avançar pela história da requisição ou clique em um ponto da arquitetura para saltar diretamente até ele.')}
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
+            <FlowControls
+              isPlaying={isPlaying}
+              canGoBack={currentStepIndex > 0}
+              canGoForward={steps.length > 0 && currentStepIndex < steps.length}
+              onBack={handlePrev}
+              onNext={handleNext}
+              onPlayPause={handlePlayPause}
+              onRestart={handleRestart}
+              showRestart={isFinished}
+              labels={{
+                play: t('flow.run', 'Executar'),
+                pause: t('flow.pause', 'Pausar'),
+                back: t('flow.previousStep', 'Etapa anterior'),
+                next: t('flow.nextStep', 'Próxima etapa'),
+                restart: t('flow.restart', 'Reiniciar'),
+              }}
+            />
+
+            <div className="inline-flex items-center rounded-full border border-borderSubtle bg-white p-1 shadow-sm dark:bg-slate-900/90">
+              {[3000, 1500, 750].map((speed) => (
+                <button
+                  key={speed}
+                  onClick={() => setPlaybackSpeed(speed)}
+                  className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
+                    playbackSpeed === speed
+                      ? 'bg-primary-600 text-white'
+                      : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  {speed === 3000 ? '0.5x' : speed === 1500 ? '1x' : '2x'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-0 xl:grid-cols-[320px_minmax(0,1fr)]">
+        <div className="border-b border-borderSubtle bg-slate-50/80 p-5 dark:border-slate-800 dark:bg-slate-950/45 xl:border-b-0 xl:border-r">
+          <div className="mb-4">
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-textMuted">
+              {t('flow.architectureRoute', 'Rota arquitetural')}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-textMuted">
+              {t('flow.architectureRouteDescription', 'Esta coluna mostra o caminho conceitual da requisição, do ponto de origem até o resultado final.')}
+            </p>
+          </div>
+
+          <div className="relative space-y-3">
+            <div className="absolute bottom-6 left-5 top-5 w-px bg-slate-200 dark:bg-slate-800" />
+            {diagram.stages.map((stage, index) => {
+              const isActive = index === currentStageIndex;
+              const isCompleted = index < currentStageIndex || isFinished;
+              const state = isActive ? 'active' : isCompleted ? 'completed' : 'upcoming';
 
               return (
-                <button 
-                  key={idx}
-                  onClick={() => handleJumpToStep(idx)}
-                  className={`w-full text-left relative z-10 flex items-start gap-3 p-2 rounded-lg transition-colors hover:bg-slate-200/50 dark:hover:bg-slate-800/50 ${isActive ? 'bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700' : ''}`}
+                <button
+                  key={stage.id}
+                  onClick={() => handleJumpToStage(index)}
+                  className={`relative flex w-full min-w-0 items-start gap-4 rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${
+                    getToneUi(stage.tone, state)
+                  } ${isActive ? 'shadow-lg' : 'shadow-sm'}`}
                 >
-                  <div className={`mt-1.5 w-6 h-6 rounded-full border-2 flex-shrink-0 ${markerColor}`}></div>
-                  <div className="flex-1 overflow-hidden">
-                    <div className="flex items-center justify-between">
-                      <span className={`text-xs font-bold ${isActive ? 'text-primary-600 dark:text-primary-400' : 'text-slate-600 dark:text-slate-400'}`}>
-                        {t('mission.step')} {idx + 1}
+                  <div className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-black ${getToneUi(stage.tone, 'active')}`}>
+                    {index + 1}
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] ${
+                        isActive ? getToneUi(stage.tone, 'active') : getToneUi(stage.tone, 'upcoming')
+                      }`}>
+                        {stage.badge}
                       </span>
-                      {isPast && !isActive && (
-                        <span className={`text-[10px] uppercase font-bold ${isError ? 'text-red-500' : 'text-emerald-500'}`}>
-                          {isError ? t('flow.error') : t('flow.completed')}
+                      {isActive && (
+                        <span className="text-[11px] font-bold text-primary-600 dark:text-primary-300">
+                          {t('flow.now', 'Agora')}
                         </span>
                       )}
-                      {isActive && (
-                        <span className="text-[10px] uppercase font-bold text-primary-500">{t('flow.currentStep')}</span>
-                      )}
                     </div>
-                    <p className={`text-sm truncate ${isActive ? 'text-slate-900 dark:text-white font-medium' : 'text-slate-500 dark:text-slate-400'}`}>
-                      {s.method} {s.path || `Status ${s.statusCode}`}
+                    <h4 className={`mt-3 break-words font-black leading-snug text-textMain ${
+                      stage.id === 'request' || stage.id === 'endpoint' ? 'font-mono text-[13px]' : 'text-base'
+                    }`}>
+                      {stage.title}
+                    </h4>
+                    <p className="mt-1 break-words text-xs font-medium text-textMuted">
+                      {stage.subtitle}
                     </p>
                   </div>
                 </button>
               );
             })}
-            
-            {/* Final State */}
-            <div className="relative z-10 flex items-start gap-3 p-2">
-              <div className={`mt-1 w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${currentStepIndex === steps.length ? 'bg-emerald-500 border-emerald-200 text-white' : 'bg-slate-200 dark:bg-slate-700 border-transparent text-transparent'}`}>
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
-              </div>
-              <div>
-                <span className={`text-sm font-bold ${currentStepIndex === steps.length ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-600'}`}>{t('flow.finished')}</span>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Inspect Panel */}
-        <div className="w-full md:w-2/3 p-6 flex flex-col glass-panel">
-          {currentStepData ? (
-            <div className="h-full flex flex-col animate-fadeIn">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6 gap-4">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2 flex-wrap">
-                    <span className={`px-2 py-1 rounded text-xs text-white ${currentStepData.statusCode >= 400 ? 'bg-red-500' : (currentStepData.method ? 'bg-blue-500' : 'bg-emerald-500')}`}>
-                      {currentStepData.method || 'RES'}
-                    </span>
-                    <span className="break-all">{currentStepData.path || t('flow.response')}</span>
-                  </h3>
-                  <p className="text-sm text-slate-500 mt-2 flex items-center flex-wrap">
-                    <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">{currentStepData.fromNodeKey}</span> 
-                    <span className="mx-2">&rarr;</span> 
-                    <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">{currentStepData.toNodeKey}</span>
+        <div className="min-w-0 p-6">
+          {focusedStep && activeStage ? (
+            <div className="space-y-5">
+              <div className={`rounded-3xl border p-6 shadow-sm ${getToneUi(activeStage.tone, 'active')}`}>
+                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] ${getToneUi(activeStage.tone, 'active')}`}>
+                        {activeStage.badge}
+                      </span>
+                      <span className="rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500 dark:bg-slate-950/60 dark:text-slate-300">
+                        {isFinished ? t('flow.finalState', 'Estado final') : `${t('mission.step', 'Passo')} ${currentStepIndex + 1}`}
+                      </span>
+                    </div>
+
+                    <h3 className={`mt-4 break-words text-2xl font-black leading-tight text-textMain ${
+                      focusedStep.path ? 'font-mono text-xl sm:text-2xl' : ''
+                    }`}>
+                      {focusedStep.method ? `${focusedStep.method} ${focusedStep.path || ''}` : activeStage.title}
+                    </h3>
+                    <p className="mt-3 break-words text-sm leading-relaxed text-textMain/80 sm:text-base">
+                      {focusedStep.logMessage || activeStage.description}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-950/60">
+                    <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                      {t('flow.status', 'Status')}
+                    </div>
+                    <div className={`mt-1 text-2xl font-black ${activeStatusCode >= 400 ? 'text-rose-500' : 'text-emerald-500'}`}>
+                      {activeStatusCode}
+                    </div>
+                    <div className="mt-1 text-xs font-semibold text-textMuted">
+                      {getStatusText(activeStatusCode)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <div className="rounded-2xl border border-borderSubtle bg-white p-5 shadow-sm dark:bg-slate-900/80">
+                  <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
+                    {t('flow.whatHappensNow', 'O que acontece aqui')}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-textMain sm:text-[15px]">
+                    {activeStage.description}
                   </p>
                 </div>
-                <div className="sm:text-right bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 min-w-[100px]">
-                  <div className="text-xs text-slate-500 uppercase">{t('flow.status')}</div>
-                  <div className={`text-xl font-mono font-bold ${currentStepData.statusCode >= 400 ? 'text-red-500' : 'text-emerald-500'}`}>
-                    {currentStepData.statusCode || '---'}
-                  </div>
+
+                <div className="rounded-2xl border border-borderSubtle bg-slate-50/90 p-5 shadow-sm dark:bg-slate-950/60">
+                  <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
+                    {t('flow.whyThisMatters', 'Por que isso importa')}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-textMain sm:text-[15px]">
+                    {getStageImportance(activeStage, activeStatusCode, t)}
+                  </p>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center">
-                    <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                    {t('flow.request')}
-                  </h4>
-                  <pre className="text-xs font-mono text-slate-700 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto">
-                    {currentStepData.requestPayload ? JSON.stringify(currentStepData.requestPayload, null, 2) : <span className="text-slate-400 italic">{t('flow.noPayload')}</span>}
+
+              <div className="rounded-2xl border border-borderSubtle bg-gradient-to-r from-white to-slate-50/80 p-5 shadow-sm dark:from-slate-900 dark:to-slate-950/70">
+                <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
+                  {t('flow.scenarioImpact', 'Efeito do cenário atual')}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-textMain sm:text-[15px]">
+                  {getScenarioEffect(focusedStep, activeStatusCode, activeStage, t)}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                <div className="min-w-0 rounded-2xl border border-borderSubtle bg-slate-50/85 p-5 shadow-sm dark:bg-slate-950/60">
+                  <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
+                    {t('flow.requestPreview', 'Request relacionado')}
+                  </p>
+                  <pre className="mt-3 max-h-[220px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-borderSubtle bg-white p-4 text-xs text-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
+                    {requestPreview || <span className="italic text-slate-400">{t('flow.noPayload', 'Sem payload relevante nesta etapa.')}</span>}
                   </pre>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center">
-                    <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    {t('flow.response')}
-                  </h4>
-                  <pre className="text-xs font-mono text-slate-700 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto">
-                    {currentStepData.responsePayload ? JSON.stringify(currentStepData.responsePayload, null, 2) : <span className="text-slate-400 italic">{t('flow.noResponse')}</span>}
+
+                <div className="min-w-0 rounded-2xl border border-borderSubtle bg-slate-50/85 p-5 shadow-sm dark:bg-slate-950/60">
+                  <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
+                    {t('flow.responsePreview', 'Response relacionado')}
+                  </p>
+                  <pre className="mt-3 max-h-[220px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-borderSubtle bg-white p-4 text-xs text-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
+                    {responsePreview || <span className="italic text-slate-400">{t('flow.noResponse', 'Sem response detalhado nesta etapa.')}</span>}
                   </pre>
                 </div>
               </div>
-              
-              <div className="mt-auto">
-                <div className="bg-slate-900 dark:bg-[#0a0a0a] rounded-lg p-4 border-l-4 border-primary-500 shadow-inner">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase mb-2">{t('flow.logs')}</h4>
-                  <div className="font-mono">
-                    <span className="text-emerald-500 mr-2">{'>'}</span> 
-                    <span className="text-slate-300 text-sm">{currentStepData.logMessage || '...'}</span>
+
+              <div className="rounded-2xl border-l-4 border-primary-500 bg-slate-950 p-5 shadow-inner dark:bg-black">
+                <p className="text-xs font-black uppercase tracking-[0.1em] text-slate-400">
+                  {t('flow.liveNarration', 'Leitura viva da etapa')}
+                </p>
+                <div className="mt-3 break-words font-mono text-sm leading-relaxed text-slate-300">
+                  <span className="mr-2 text-emerald-500">{'>'}</span>
+                  {focusedStep.logMessage || scenario.explanation || t('flow.didacticSummary', 'A requisição percorre as camadas até a resposta voltar para a interface.')}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-borderSubtle bg-white p-5 shadow-sm dark:bg-slate-900/80">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
+                      {t('flow.executionMoments', 'Momentos da execução')}
+                    </p>
+                    <p className="mt-1 text-sm text-textMuted">
+                      {t('flow.executionMomentsDescription', 'Cada passo abaixo representa um momento técnico real da missão e ajuda a localizar a falha ou o sucesso com precisão.')}
+                    </p>
                   </div>
+                  <div className="text-sm font-bold text-textMain">
+                    {isFinished
+                      ? t('flow.finished', 'Fluxo concluído')
+                      : currentStepIndex >= 0
+                        ? `${t('mission.step', 'Passo')} ${currentStepIndex + 1} ${t('mission.of', 'de')} ${steps.length}`
+                        : t('flow.readyToStart', 'Pronto para iniciar')}
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-1 gap-3 md:[grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+                  {steps.map((step, index) => {
+                    const isActive = index === currentStepIndex;
+                    const isPast = index < currentStepIndex || isFinished;
+                    const isError = (step.statusCode ?? diagram.statusCode) >= 400;
+
+                    return (
+                      <button
+                        key={`${step.fromNodeKey}-${step.toNodeKey}-${index}`}
+                        onClick={() => handleJumpToStep(index)}
+                        className={`min-w-0 rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${
+                          isActive
+                            ? 'border-primary-300 bg-primary-50 shadow-md dark:border-primary-700/50 dark:bg-primary-950/30'
+                            : isPast
+                              ? `${isError ? 'border-rose-200 dark:border-rose-900/50' : 'border-emerald-200 dark:border-emerald-900/50'} bg-slate-50/70 dark:bg-slate-950/40`
+                              : 'border-borderSubtle bg-white dark:bg-slate-950/20'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.08em] ${
+                            isActive
+                              ? 'bg-primary-600 text-white'
+                              : isPast
+                                ? isError
+                                  ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-200'
+                                  : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200'
+                                : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-300'
+                          }`}>
+                            {t('mission.step', 'Passo')} {index + 1}
+                          </span>
+                          <span className={`text-xs font-bold ${isError ? 'text-rose-500' : 'text-slate-500 dark:text-slate-400'}`}>
+                            {step.statusCode ?? diagram.statusCode}
+                          </span>
+                        </div>
+
+                        <h4 className={`mt-3 break-all font-black leading-snug text-textMain ${
+                          step.method ? 'font-mono text-sm' : 'text-base'
+                        }`} title={step.method ? `${step.method} ${step.path || ''}` : `${t('flow.response', 'Response')} ${step.statusCode || diagram.statusCode}`}>
+                          {step.method ? `${step.method} ${step.path || ''}` : `${t('flow.response', 'Response')} ${step.statusCode || diagram.statusCode}`}
+                        </h4>
+
+                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-textMuted">
+                          {step.logMessage || t('flow.waiting', 'Aguardando')}
+                        </p>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 bg-slate-50/50 dark:bg-transparent rounded-lg border border-dashed border-slate-200 dark:border-slate-800">
-              <svg className="w-16 h-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              <p className="text-lg font-medium">{currentStepIndex === steps.length ? t('flow.finished') : t('flow.waiting')}</p>
-              {currentStepIndex === -1 && (
-                <button onClick={handlePlayPause} className="mt-6 px-8 py-3 bg-primary-600 hover:bg-primary-500 text-white rounded-full font-bold shadow-lg shadow-primary-500/30 transition-all hover:scale-105">
-                  {t('flow.run')}
-                </button>
-              )}
+            <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-slate-50/70 p-8 text-center dark:border-slate-700 dark:bg-slate-950/30">
+              <div className="rounded-full bg-primary-100 p-4 text-primary-600 dark:bg-primary-950/40 dark:text-primary-300">
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="mt-5 text-2xl font-black text-textMain">
+                {t('flow.readyToTravel', 'Pronto para percorrer a requisição')}
+              </h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-textMuted sm:text-base">
+                {t('flow.startHint', 'Inicie a simulação para acompanhar a rota da request com foco total na etapa ativa e no impacto pedagógico de cada transição.')}
+              </p>
+              <div className="mt-6">
+                <FlowControls
+                  isPlaying={isPlaying}
+                  canGoBack={false}
+                  canGoForward={steps.length > 0}
+                  onBack={handlePrev}
+                  onNext={handleNext}
+                  onPlayPause={handlePlayPause}
+                  labels={{
+                    play: t('flow.run', 'Executar'),
+                    pause: t('flow.pause', 'Pausar'),
+                    back: t('flow.previousStep', 'Etapa anterior'),
+                    next: t('flow.nextStep', 'Próxima etapa'),
+                  }}
+                />
+              </div>
             </div>
           )}
         </div>

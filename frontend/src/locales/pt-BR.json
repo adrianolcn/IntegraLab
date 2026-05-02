@@ -184,7 +184,10 @@
     "viewDetails": "Ver Detalhes",
     "loading": "Carregando trilhas...",
     "empty": "Nenhuma trilha encontrada. Verifique se o seed do banco de dados foi executado.",
-    "start": "Começar Trilha"
+    "start": "Começar Trilha",
+    "module": "Módulo",
+    "pending_req": "Requisito pendente",
+    "theory_only_module": "Este módulo já tem teoria disponível. Estude a aula para preparar sua base antes das próximas missões."
   },
   "status": {
     "available": "Disponível",
@@ -250,6 +253,256 @@
     "noResponse": "Sem resposta",
     "finished": "Fluxo concluído"
   },
+  "interactiveFlow": {
+    "kicker": "Fluxo guiado",
+    "title": "O ciclo Request e Response",
+    "subtitle": "Avance etapa por etapa e acompanhe como a mensagem sai do cliente, passa pela API e volta pronta para a interface.",
+    "currentState": "Agora",
+    "completedState": "Concluído",
+    "upcomingState": "Próxima",
+    "stepShort": "Etapa",
+    "requestPhase": "Request",
+    "processingPhase": "Processamento",
+    "responsePhase": "Response",
+    "requestLaneTitle": "Trilha da Request",
+    "responseLaneTitle": "Trilha da Response",
+    "requestLaneLead": "A pergunta está entrando no sistema.",
+    "responseLaneLead": "A resposta está voltando para a interface.",
+    "requestLaneDescription": "Primeiro o cliente monta a intenção, escolhe o endpoint e entrega a mensagem para a API validar e processar.",
+    "responseLaneDescription": "Depois do processamento, o servidor monta a resposta HTTP e a interface traduz o resultado técnico em algo visual para a pessoa usuária.",
+    "stepCounterLabel": "Progresso",
+    "stepCounter": "Etapa {{current}} de {{total}}",
+    "activeStageLabel": "Etapa ativa",
+    "whatHappensTitle": "O que acontece aqui?",
+    "whyMattersTitle": "Por que isso importa?",
+    "exampleTitle": "Exemplo prático",
+    "relatedTermsTitle": "Termos relacionados",
+    "nextStepsTitle": "Próximos checkpoints"
+  },
+  "rrCycle": {
+    "kicker": "Player do ciclo",
+    "title": "O ciclo técnico da Request até a Response",
+    "subtitle": "Siga a jornada completa da mensagem: intenção no cliente, validação na API, processamento no servidor e retorno para a interface.",
+    "requestPhase": "Request",
+    "processingPhase": "Processamento",
+    "responsePhase": "Response",
+    "packetLabel": "Pacote em trânsito",
+    "phaseLabel": "Fase",
+    "actorLabel": "Quem age agora",
+    "debugLabel": "Pista de debug",
+    "activeStepLabel": "Passo {{current}} de {{total}}",
+    "readingHintTitle": "Leitura mental correta",
+    "sequenceLabel": "Sequência completa",
+    "stages": {
+      "client": "Cliente",
+      "request": "Request",
+      "api": "API",
+      "server": "Servidor",
+      "response": "Response",
+      "interface": "Interface"
+    },
+    "steps": {
+      "clientClick": {
+        "title": "O cliente decide agir",
+        "desc": "Tudo começa quando o {{Cliente}} precisa de algo: abrir uma tela, enviar um formulário ou atualizar um painel. Sem essa iniciativa, nada acontece no modelo clássico de {{HTTP}}.",
+        "packet": "Clique no botão \"Finalizar pedido\"",
+        "actor": "{{Cliente}}",
+        "debug": "Pergunte primeiro: quem disparou a ação e em qual contexto?",
+        "hint": "O erro ainda não existe aqui. Esta etapa só mostra que o fluxo começa sempre na ponta do usuário, nunca no {{Servidor}} empurrando dados por conta própria."
+      },
+      "requestAssembled": {
+        "title": "A Request é montada",
+        "desc": "O {{Cliente}} organiza a {{Request}} com um {{Método HTTP}}, um {{Endpoint}}, {{Headers}} e talvez um {{Body}}. Esse pacote viaja com uma intenção explícita.",
+        "packet": "POST /api/orders + Authorization + Content-Type + Body",
+        "actor": "{{Request}}",
+        "debug": "Confira método, caminho, headers e payload antes de culpar a API.",
+        "hint": "Quando a montagem sai errada, os problemas mais comuns aparecem como {{400 Bad Request}}, {{401 Unauthorized}} ou {{415 Unsupported Media Type}}."
+      },
+      "apiValidation": {
+        "title": "A API faz a triagem",
+        "desc": "A {{API}} recebe o pacote e decide se ele merece entrar. Aqui ela valida formato, autenticação, rota e contrato antes de acionar a regra de negócio.",
+        "packet": "Validação de rota, token e contrato",
+        "actor": "{{API}}",
+        "debug": "Se falhou cedo, a pista costuma morar nos {{Headers}}, no {{Path}} ou no tipo do {{Body}}.",
+        "hint": "Pense na {{API}} como o porteiro digital: ela barra pedidos malformados antes de gastar processamento no {{Servidor}}."
+      },
+      "serverProcessing": {
+        "title": "O servidor processa a regra",
+        "desc": "Depois da triagem, o {{Servidor}} executa a lógica da aplicação. É aqui que ele consulta banco, calcula preços, aplica permissões e decide o resultado da operação.",
+        "packet": "Regra de negócio + acesso a dados",
+        "actor": "{{Servidor}}",
+        "debug": "Se o contrato estava certo e ainda assim quebrou, comece a investigar regra de negócio ou falha interna.",
+        "hint": "Nem todo problema do {{Servidor}} gera {{500 Internal Server Error}}. Às vezes a lógica funciona, mas devolve um {{404 Not Found}} ou outro status deliberado."
+      },
+      "responseBuilt": {
+        "title": "A Response é construída",
+        "desc": "Com a decisão tomada, o sistema monta a {{Response}}: um {{Status Code}}, {{Headers}} de saída e possivelmente um {{Body}} com dados ou mensagem de erro.",
+        "packet": "HTTP/1.1 201 Created + JSON",
+        "actor": "{{Response}}",
+        "debug": "O primeiro resumo da história sempre está no {{Status Code}}.",
+        "hint": "A {{Response}} não é detalhe cosmético. Ela é o contrato final dizendo se a operação criou, encontrou, rejeitou ou quebrou algo."
+      },
+      "interfaceRendered": {
+        "title": "A interface traduz o resultado",
+        "desc": "A {{Interface}} lê a {{Response}} e converte dados técnicos em tela humana: lista, alerta, erro de validação ou confirmação de sucesso.",
+        "packet": "Render da tela com sucesso ou erro",
+        "actor": "{{Interface}}",
+        "debug": "Frontend bom não ignora corpo de erro; ele interpreta a {{Response}} inteira.",
+        "hint": "Quando a UI mostra algo estranho, confirme se o bug está na renderização da {{Interface}} ou se o problema nasceu antes, dentro da própria {{Response}}."
+      }
+    }
+  },
+  "rrAnatomy": {
+    "kicker": "Anatomia comparada",
+    "title": "Request de um lado, Response do outro",
+    "subtitle": "Clique em cada bloco e veja qual pedaço da conversa pertence ao envio do pedido e qual pertence ao retorno do servidor.",
+    "requestPanel": "Request",
+    "requestRole": "O cliente fala",
+    "responsePanel": "Response",
+    "responseRole": "O servidor responde",
+    "emptyLine": "Linha de separação entre Headers e Body",
+    "detailKicker": "Parte selecionada",
+    "detailWhat": "O que isso representa",
+    "detailDebug": "Como isso ajuda no debug",
+    "code": {
+      "request": {
+        "method": "POST",
+        "path": "/api/orders",
+        "protocol": "HTTP/1.1",
+        "hostLabel": "Host",
+        "hostValue": "api.integralab.dev",
+        "authorizationLabel": "Authorization",
+        "authorizationValue": "Bearer demo-token",
+        "contentTypeLabel": "Content-Type",
+        "contentTypeValue": "application/json",
+        "body": {
+          "productIdKey": "productId",
+          "productIdValue": "42",
+          "quantityKey": "quantity",
+          "quantityValue": "1"
+        }
+      },
+      "response": {
+        "protocol": "HTTP/1.1",
+        "statusLine": "201 Created",
+        "contentTypeLabel": "Content-Type",
+        "contentTypeValue": "application/json",
+        "locationLabel": "Location",
+        "locationValue": "/api/orders/99",
+        "requestIdLabel": "X-Request-Id",
+        "requestIdValue": "rr-202",
+        "body": {
+          "idKey": "id",
+          "idValue": "99",
+          "statusKey": "status",
+          "statusValue": "created"
+        }
+      }
+    },
+    "parts": {
+      "method": {
+        "title": "Método da Request",
+        "desc": "O {{Método HTTP}} é o verbo da conversa. Ele diz se o {{Cliente}} quer buscar, criar, atualizar ou remover algo.",
+        "debug": "Se o método estiver errado, a API pode responder com {{400 Bad Request}} ou rejeitar semanticamente a ação esperada."
+      },
+      "path": {
+        "title": "Path e Endpoint",
+        "desc": "O {{Path}} aponta para o recurso certo dentro do {{Endpoint}}. Ele diz onde a {{Request}} deve aterrissar.",
+        "debug": "Um caminho errado costuma explicar {{404 Not Found}} sem nenhum drama do lado do {{Servidor}}."
+      },
+      "requestHeaders": {
+        "title": "Headers da Request",
+        "desc": "Os {{Headers}} da {{Request}} levam metadados: identidade, formato do payload, idioma preferido e outras pistas invisíveis.",
+        "debug": "Erros de autenticação e interpretação de formato quase sempre começam aqui."
+      },
+      "requestBody": {
+        "title": "Body da Request",
+        "desc": "O {{Body}} transporta a carga útil. Em operações de escrita, é onde o {{Payload}} costuma viajar em {{JSON}}.",
+        "debug": "Se a estrutura do payload vier errada, o servidor pode rejeitar a operação antes mesmo de executar a regra de negócio."
+      },
+      "status": {
+        "title": "Status da Response",
+        "desc": "O {{Status Code}} é o resumo executivo da resposta. Ele diz rapidamente se deu certo, se faltou algo ou se houve falha interna.",
+        "debug": "Aprenda a ler o número antes de especular: ele encurta metade do diagnóstico."
+      },
+      "responseHeaders": {
+        "title": "Headers da Response",
+        "desc": "Os {{Headers}} da {{Response}} devolvem contexto técnico: tipo do conteúdo, localização do recurso criado e identificadores úteis para rastreio.",
+        "debug": "Quando o corpo não explica tudo, os headers de saída frequentemente revelam contrato, cache ou rastreabilidade."
+      },
+      "responseBody": {
+        "title": "Body da Response",
+        "desc": "O {{Body}} da {{Response}} entrega dados, mensagens ou detalhes de erro. Ele é o material que a {{Interface}} vai interpretar.",
+        "debug": "Ignorar o corpo da resposta é desperdiçar a explicação que a API acabou de te dar."
+      }
+    }
+  },
+  "rrExamples": {
+    "kicker": "Casos clássicos",
+    "title": "Três cenas para fixar o ciclo",
+    "subtitle": "Veja como o comportamento muda quando o objetivo é apenas ler dados, criar um recurso novo ou pedir algo que não existe.",
+    "requestLabel": "Request",
+    "responseLabel": "Response",
+    "takeawayLabel": "Leitura técnica",
+    "cards": {
+      "get": {
+        "method": "GET",
+        "status": "200 OK",
+        "title": "Leitura simples de dados",
+        "desc": "Uma {{Request}} de leitura geralmente não precisa de {{Body}}. O foco está no {{Path}} e nos {{Headers}}.",
+        "request": "GET /api/products/42 HTTP/1.1\nAccept: application/json",
+        "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"id\": 42,\n  \"name\": \"Notebook\"\n}",
+        "takeaway": "Quando você só quer consultar, o ciclo costuma ser mais enxuto: {{Método HTTP}} de leitura, sem {{Payload}}, e {{Status Code}} de sucesso no retorno."
+      },
+      "post": {
+        "method": "POST",
+        "status": "201 Created",
+        "title": "Criação com payload",
+        "desc": "Uma escrita exige mais contexto: {{Body}} preenchido, contrato correto e um retorno coerente de criação.",
+        "request": "POST /api/orders HTTP/1.1\nAuthorization: Bearer demo-token\nContent-Type: application/json\n\n{\n  \"productId\": 42,\n  \"quantity\": 1\n}",
+        "response": "HTTP/1.1 201 Created\nLocation: /api/orders/99\nContent-Type: application/json\n\n{\n  \"id\": 99,\n  \"status\": \"created\"\n}",
+        "takeaway": "Aqui o ciclo inteiro aparece com clareza: intenção no {{Método HTTP}}, dados no {{Body}} e confirmação via {{201 Created}}."
+      },
+      "notFound": {
+        "method": "GET",
+        "status": "404 Not Found",
+        "title": "Pedido para um recurso inexistente",
+        "desc": "Nem todo erro significa queda do sistema. Às vezes a {{Request}} chegou bem, mas o recurso simplesmente não existe.",
+        "request": "GET /api/products/99999 HTTP/1.1\nAccept: application/json",
+        "response": "HTTP/1.1 404 Not Found\nContent-Type: application/json\n\n{\n  \"message\": \"Product not found\"\n}",
+        "takeaway": "O {{404 Not Found}} ensina a separar falha de rota ou recurso ausente de um verdadeiro {{500 Internal Server Error}}."
+      }
+    }
+  },
+  "rrMistakes": {
+    "kicker": "Antipadrões",
+    "title": "Quatro erros de interpretação que atrasam o debug",
+    "subtitle": "Esses enganos fazem a pessoa olhar para o lugar errado do ciclo e perder tempo tentando corrigir o que não está quebrado.",
+    "wrongLabel": "Leitura errada",
+    "correctionLabel": "Leitura correta",
+    "cards": {
+      "serverDown": {
+        "title": "Confundir 404 com servidor fora do ar",
+        "wrong": "Receber {{404 Not Found}} não significa automaticamente que o {{Servidor}} caiu. Muitas vezes o ciclo funcionou, mas o {{Path}} ou o recurso pedido não existe.",
+        "correction": "Leia o {{404 Not Found}} como uma pista de endereço ou recurso ausente. Guarde {{500 Internal Server Error}} para falhas internas reais."
+      },
+      "getBody": {
+        "title": "Achar que GET depende de body",
+        "wrong": "Forçar {{Body}} em toda {{Request}} embaralha o modelo mental. Em leitura simples, o mais comum é usar {{GET}} sem {{Payload}}.",
+        "correction": "Use o {{Body}} quando a intenção realmente exigir envio de dados. Em consultas, prefira {{Path}}, query string e {{Headers}}."
+      },
+      "ignoreResponse": {
+        "title": "Olhar só para o número e ignorar o corpo",
+        "wrong": "Ler apenas o {{Status Code}} e ignorar o {{Body}} da {{Response}} faz você perder mensagem, contexto e detalhes do erro.",
+        "correction": "O número resume; o corpo explica. Debug maduro lê a {{Response}} inteira."
+      },
+      "uiVsApi": {
+        "title": "Culpar a API por qualquer tela estranha",
+        "wrong": "Se a {{Interface}} renderiza errado, isso não prova que a {{API}} respondeu errado. O problema pode nascer na transformação dos dados no frontend.",
+        "correction": "Compare a {{Response}} real com o que a {{Interface}} exibiu. Assim você separa bug de contrato de bug de renderização."
+      }
+    }
+  },
   "sandbox": {
     "title": "Sandbox HTTP",
     "subtitle": "Teste seus endpoints interativamente em um ambiente seguro.",
@@ -277,6 +530,26 @@
     "checkConnection": "Verifique se o backend está rodando em {url}",
     "noResponseYet": "Envie uma requisição para ver a resposta aqui"
   },
+  "lab": {
+    "chooseScenarioTitle": "Escolha um cenário",
+    "chooseScenarioDescription": "Teste como headers e autenticação mudam a resposta da API.",
+    "perfect": {
+      "label": "Requisição Perfeita",
+      "short": "Headers e body corretos."
+    },
+    "no_content_type": {
+      "label": "Esquecer Content-Type",
+      "short": "Body enviado sem informar o formato."
+    },
+    "wrong_content_type": {
+      "label": "Mentir no Content-Type",
+      "short": "Header diz uma coisa, body entrega outra."
+    },
+    "no_auth": {
+      "label": "Esquecer Authorization",
+      "short": "Endpoint protegido sem token."
+    }
+  },
   "lesson": {
     "studyConcept": "Estudar conceito",
     "readingTime": "Tempo de leitura",
@@ -292,6 +565,7 @@
     "testInSandbox": "Testar no Sandbox",
     "goToMission": "Ir para a missão prática",
     "backToModule": "Voltar para o módulo",
+    "backToTrack": "Voltar para a trilha",
     "noLessons": "Nenhuma teoria disponível",
     "loading": "Carregando aula...",
     "not_found": "Aula não encontrada.",
@@ -312,6 +586,7 @@
     "copied": "Copiado!",
     "watchOut": "Cuidado",
     "theoryBadge": "Teoria",
-    "minRead": "min leitura"
+    "minRead": "min leitura",
+    "lessonContext": "Relação com esta aula"
   }
 }
