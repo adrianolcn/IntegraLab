@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - 'frontend/**'
+      - 'backend/src/main/resources/db/migration/**'
   pull_request:
     paths:
       - 'frontend/**'
+      - 'backend/src/main/resources/db/migration/**'
 
 jobs:
   build:
@@ -26,6 +28,9 @@ jobs:
       
       - name: Install dependencies
         run: npm ci
+
+      - name: Validate theory engine
+        run: npm run validate:theory
 
       - name: Lint
         run: npm run lint
