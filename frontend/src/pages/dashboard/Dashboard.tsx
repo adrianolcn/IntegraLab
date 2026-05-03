@@ -76,7 +76,7 @@ export default function Dashboard() {
       }
     }
     loadNext();
-  }, [user, i18n.language]);
+  }, [user, i18n.language, t]);
 
   if (!user) return null;
 

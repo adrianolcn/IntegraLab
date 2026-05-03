@@ -4,6 +4,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../lib/api';
 import { useTranslation } from 'react-i18next';
 
+function getErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return fallback;
+}
+
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -21,8 +28,8 @@ export default function Login() {
       const response = await api.login({ email, password });
       login(response.token, response.user);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Erro ao fazer login'));
     } finally {
       setIsLoading(false);
     }

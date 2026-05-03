@@ -54,12 +54,13 @@ export default function AuthFlowPlayer({ glossaryJson }: AuthFlowPlayerProps) {
       from: 'server', to: 'client', label: '200 OK + Dados', activeObj: 'data'
     }
   ];
+  const totalSteps = steps.length;
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     if (isPlaying) {
       timer = setTimeout(() => {
-        if (step < steps.length - 1) {
+        if (step < totalSteps - 1) {
           setStep(s => s + 1);
         } else {
           setIsPlaying(false);
@@ -67,10 +68,10 @@ export default function AuthFlowPlayer({ glossaryJson }: AuthFlowPlayerProps) {
       }, 3000);
     }
     return () => clearTimeout(timer);
-  }, [isPlaying, step]);
+  }, [isPlaying, step, totalSteps]);
 
   const togglePlay = () => {
-    if (step === steps.length - 1) setStep(0);
+    if (step === totalSteps - 1) setStep(0);
     setIsPlaying(!isPlaying);
   };
 
@@ -151,7 +152,7 @@ export default function AuthFlowPlayer({ glossaryJson }: AuthFlowPlayerProps) {
 
         <div className="min-w-0 flex-1">
           <div className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-indigo-600 dark:text-indigo-400">
-            Passo {step + 1} de {steps.length}
+            Passo {step + 1} de {totalSteps}
           </div>
           <h3 className="mb-2 text-xl font-black text-textMain break-words">
             {current.title}

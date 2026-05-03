@@ -16,13 +16,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(localStorage.getItem('integralab-token'));
   const [isLoading, setIsLoading] = useState(true);
 
+  const logout = () => {
+    localStorage.removeItem('integralab-token');
+    setToken(null);
+    setUser(null);
+  };
+
   useEffect(() => {
     async function loadUser() {
       if (token) {
         try {
           const userData = await api.getMe(token);
           setUser(userData);
-        } catch (error) {
+        } catch {
           console.error("Failed to authenticate token");
           logout();
         }
@@ -36,12 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('integralab-token', newToken);
     setToken(newToken);
     setUser(newUser);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('integralab-token');
-    setToken(null);
-    setUser(null);
   };
 
   return (

@@ -11,6 +11,26 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/integralab
+      SPRING_DATASOURCE_USERNAME: integralab
+      SPRING_DATASOURCE_PASSWORD: integralab
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      JWT_EXPIRATION: 86400000
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: integralab
+          POSTGRES_USER: integralab
+          POSTGRES_PASSWORD: integralab
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U integralab -d integralab"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: ./backend
@@ -29,3 +49,11 @@ jobs:
       
       - name: Build and Test
         run: ./mvnw clean compile test
+
+      - name: Upload surefire reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-surefire-reports
+          path: backend/target/surefire-reports
+          if-no-files-found: ignore

@@ -30,6 +30,13 @@ export default function Requestia() {
     return status;
   };
 
+  const cardClassName = (isAvailable: boolean) =>
+    `block relative group p-8 rounded-2xl glass-panel ${
+      isAvailable
+        ? 'hover:-translate-y-2 hover:border-primary-400 cursor-pointer'
+        : 'opacity-70 grayscale-[30%] cursor-not-allowed'
+    } transition-all duration-300 overflow-hidden`;
+
   return (
     <div className="min-h-screen relative overflow-hidden pb-20 transition-colors duration-300">
       {/* Geometric Pattern Background */}
@@ -58,11 +65,9 @@ export default function Requestia() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {regions.map((region, idx) => {
             const isAvailable = region.status === 'Disponível';
-            const Wrapper = isAvailable ? Link : 'div';
-            const props = isAvailable ? { to: region.to! } : { onClick: handleSoonClick };
             
-            return (
-              <Wrapper key={idx} {...props as any} className={`block relative group p-8 rounded-2xl glass-panel ${isAvailable ? 'hover:-translate-y-2 hover:border-primary-400 cursor-pointer' : 'opacity-70 grayscale-[30%] cursor-not-allowed'} transition-all duration-300 overflow-hidden`}>
+            const content = (
+              <>
                 <div className="absolute inset-0 bg-white/40 dark:bg-surface/60 z-0"></div>
                 
                 <div className="relative z-10 flex justify-between items-start mb-6">
@@ -80,7 +85,17 @@ export default function Requestia() {
                     </span>
                   </div>
                 )}
-              </Wrapper>
+              </>
+            );
+
+            return isAvailable ? (
+              <Link key={idx} to={region.to!} className={cardClassName(true)}>
+                {content}
+              </Link>
+            ) : (
+              <div key={idx} onClick={handleSoonClick} className={cardClassName(false)}>
+                {content}
+              </div>
             );
           })}
         </div>

@@ -7,7 +7,7 @@ interface FeedbackPanelProps {
     suggestedCorrection?: string;
     idealAnswer?: string;
     xpEarned?: number;
-  };
+  } | null;
 }
 
 export default function FeedbackPanel({ feedback }: FeedbackPanelProps) {

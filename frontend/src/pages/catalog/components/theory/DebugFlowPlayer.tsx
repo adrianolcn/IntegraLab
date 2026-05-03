@@ -69,12 +69,13 @@ export default function DebugFlowPlayer({ glossaryJson }: DebugFlowPlayerProps) 
       icon: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z'
     }
   ];
+  const totalSteps = steps.length;
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     if (isPlaying) {
       timer = setTimeout(() => {
-        if (step < steps.length - 1) {
+        if (step < totalSteps - 1) {
           setStep(s => s + 1);
         } else {
           setIsPlaying(false);
@@ -82,10 +83,10 @@ export default function DebugFlowPlayer({ glossaryJson }: DebugFlowPlayerProps) 
       }, 3500);
     }
     return () => clearTimeout(timer);
-  }, [isPlaying, step]);
+  }, [isPlaying, step, totalSteps]);
 
   const togglePlay = () => {
-    if (step === steps.length - 1) setStep(0);
+    if (step === totalSteps - 1) setStep(0);
     setIsPlaying(!isPlaying);
   };
 
@@ -98,7 +99,7 @@ export default function DebugFlowPlayer({ glossaryJson }: DebugFlowPlayerProps) 
         {/* Step Counter Bubble */}
         <div className="absolute top-4 right-4 w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center border-2 border-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.4)]">
           <span className="text-white font-black">{step + 1}</span>
-          <span className="text-slate-400 text-xs mt-1 absolute -bottom-4">/ {steps.length}</span>
+          <span className="text-slate-400 text-xs mt-1 absolute -bottom-4">/ {totalSteps}</span>
         </div>
 
         {/* Central Icon */}
@@ -120,12 +121,12 @@ export default function DebugFlowPlayer({ glossaryJson }: DebugFlowPlayerProps) 
         <FlowControls 
           isPlaying={isPlaying}
           canGoBack={step > 0}
-          canGoForward={step < steps.length - 1}
+          canGoForward={step < totalSteps - 1}
           onBack={() => { setIsPlaying(false); setStep(Math.max(0, step - 1)); }}
-          onNext={() => { setIsPlaying(false); setStep(Math.min(steps.length - 1, step + 1)); }}
+          onNext={() => { setIsPlaying(false); setStep(Math.min(totalSteps - 1, step + 1)); }}
           onPlayPause={togglePlay}
           onRestart={() => { setIsPlaying(false); setStep(0); }}
-          showRestart={step === steps.length - 1}
+          showRestart={step === totalSteps - 1}
         />
 
         <div className="flex-1 text-center md:text-left">

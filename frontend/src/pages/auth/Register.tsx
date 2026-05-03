@@ -4,6 +4,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../lib/api';
 import { useTranslation } from 'react-i18next';
 
+function getErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return fallback;
+}
+
 export default function Register() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -22,8 +29,8 @@ export default function Register() {
       const response = await api.register({ name, email, password });
       login(response.token, response.user);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Erro ao criar conta');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Erro ao criar conta'));
     } finally {
       setIsLoading(false);
     }

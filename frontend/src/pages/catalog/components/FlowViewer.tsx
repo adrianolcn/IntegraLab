@@ -1,29 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FlowControls from './theory/FlowControls';
+import type { MissionScenario, MissionScenarioNode, MissionScenarioStep } from '../../../lib/api';
 
 interface FlowViewerProps {
-  scenario: any;
-}
-
-interface ScenarioNode {
-  nodeKey: string;
-  label: string;
-  nodeType?: string;
-}
-
-interface ScenarioStep {
-  fromNodeKey: string;
-  toNodeKey: string;
-  stepType?: string;
-  status?: string;
-  method?: string | null;
-  path?: string | null;
-  statusCode?: number | null;
-  logMessage?: string | null;
-  payloadExample?: string | null;
-  responseExample?: string | null;
-  orderIndex?: number;
+  scenario: MissionScenario | null;
 }
 
 interface DiagramStage {
@@ -34,6 +15,12 @@ interface DiagramStage {
   description: string;
   tone: 'client' | 'request' | 'endpoint' | 'api' | 'service' | 'database' | 'response' | 'ui';
 }
+
+type RequestPreview = {
+  method?: string;
+  path?: string;
+  status?: number;
+};
 
 function parseStructuredValue(value: unknown) {
   if (value == null) return null;
@@ -153,7 +140,7 @@ function getStageImportance(stage: DiagramStage, statusCode: number, t: (key: st
   }
 }
 
-function getScenarioEffect(step: ScenarioStep | null, statusCode: number, stage: DiagramStage | undefined, t: (key: string, fallback: string) => string) {
+function getScenarioEffect(step: MissionScenarioStep | null, statusCode: number, stage: DiagramStage | undefined, t: (key: string, fallback: string) => string) {
   if (!step || !stage) {
     return t('flow.effectBeforeStart', 'Antes de iniciar, a simulação mostra a rota completa para o aluno entender o terreno que a requisição vai percorrer.');
   }
@@ -177,12 +164,12 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1500);
 
-  const scenarioNodes = useMemo<ScenarioNode[]>(
+  const scenarioNodes = useMemo<MissionScenarioNode[]>(
     () => (Array.isArray(scenario?.nodes) ? scenario.nodes : []),
     [scenario?.nodes]
   );
 
-  const steps = useMemo<ScenarioStep[]>(
+  const steps = useMemo<MissionScenarioStep[]>(
     () =>
       (Array.isArray(scenario?.steps) ? [...scenario.steps] : []).sort(
         (a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)
@@ -194,10 +181,18 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
     () => parseStructuredValue(scenario?.initialRequestJson),
     [scenario?.initialRequestJson]
   );
+  const initialRequestPreview = useMemo<RequestPreview | null>(
+    () => (initialRequest && typeof initialRequest === 'object' ? (initialRequest as RequestPreview) : null),
+    [initialRequest]
+  );
 
   const simulatedResponse = useMemo(
     () => parseStructuredValue(scenario?.simulatedResponseJson),
     [scenario?.simulatedResponseJson]
+  );
+  const simulatedResponsePreview = useMemo<RequestPreview | null>(
+    () => (simulatedResponse && typeof simulatedResponse === 'object' ? (simulatedResponse as RequestPreview) : null),
+    [simulatedResponse]
   );
 
   useEffect(() => {
@@ -231,11 +226,11 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
 
     const firstStep = steps[0];
     const lastStep = steps[steps.length - 1];
-    const method = firstStep?.method || (initialRequest as any)?.method || 'GET';
-    const path = firstStep?.path || (initialRequest as any)?.path || '/resource';
+    const method = firstStep?.method || initialRequestPreview?.method || 'GET';
+    const path = firstStep?.path || initialRequestPreview?.path || '/resource';
     const finalStatusCode =
       lastStep?.statusCode ||
-      (simulatedResponse as any)?.status ||
+      simulatedResponsePreview?.status ||
       (lastStep?.status === 'FAILED' ? 400 : 200);
 
     const joinedNodeText = scenarioNodes
@@ -349,7 +344,7 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
     ];
 
     return { stages, statusCode: finalStatusCode };
-  }, [initialRequest, scenario, scenarioNodes, simulatedResponse, steps, t]);
+  }, [initialRequestPreview, scenario, scenarioNodes, simulatedResponsePreview, steps, t]);
 
   const isFinished = steps.length > 0 && currentStepIndex >= steps.length;
   const currentStepData =
@@ -449,12 +444,12 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
           <div className="grid grid-cols-1 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
             <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
               <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.method', 'Método')}</div>
-              <div className="mt-1 text-sm font-black text-textMain">{steps[0]?.method || (initialRequest as any)?.method || 'GET'}</div>
+              <div className="mt-1 text-sm font-black text-textMain">{steps[0]?.method || initialRequestPreview?.method || 'GET'}</div>
             </div>
             <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
               <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.path', 'Caminho')}</div>
-              <div className="mt-1 break-all font-mono text-sm font-black text-textMain" title={steps[0]?.path || (initialRequest as any)?.path || '/resource'}>
-                {steps[0]?.path || (initialRequest as any)?.path || '/resource'}
+              <div className="mt-1 break-all font-mono text-sm font-black text-textMain" title={steps[0]?.path || initialRequestPreview?.path || '/resource'}>
+                {steps[0]?.path || initialRequestPreview?.path || '/resource'}
               </div>
             </div>
             <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">

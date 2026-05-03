@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { api, type Track, type LearningModule, type Mission, type TheoryLesson, type TheoryProgress } from '../../lib/api';
+import {
+  api,
+  type LearningModule,
+  type Mission,
+  type MissionAccessResponse,
+  type TheoryLesson,
+  type TheoryProgress,
+  type Track,
+} from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import TheoryLessonCard from './components/TheoryLessonCard';
@@ -11,7 +19,7 @@ export default function TrackDetail() {
   const { t, i18n } = useTranslation();
   const [track, setTrack] = useState<Track | null>(null);
   const [modules, setModules] = useState<{ module: LearningModule, lessons: TheoryLesson[], missions: Mission[] }[]>([]);
-  const [accessMap, setAccessMap] = useState<Record<string, any>>({});
+  const [accessMap, setAccessMap] = useState<Record<string, MissionAccessResponse>>({});
   const [theoryMap, setTheoryMap] = useState<Record<string, TheoryProgress>>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,7 +31,7 @@ export default function TrackDetail() {
         setTrack(t);
         
         const mods = await api.getModulesByTrackId(t.id);
-        const map: Record<string, any> = {};
+        const map: Record<string, MissionAccessResponse> = {};
 
         const modulesWithMissions = await Promise.all(
           mods.map(async (m) => {

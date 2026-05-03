@@ -1,11 +1,44 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { api, type Mission, type TheoryLesson, type TheoryProgress, type Track } from '../../lib/api';
+import {
+  api,
+  type CheckpointResultResponse,
+  type GuidedStep,
+  type Mission,
+  type MissionAccessResponse,
+  type MissionOption,
+  type MissionScenario,
+  type TheoryLesson,
+  type TheoryProgress,
+  type Track,
+} from '../../lib/api';
 import FlowViewer from './components/FlowViewer';
 import HttpSandboxPanel from './components/HttpSandboxPanel';
 import FeedbackPanel from './components/FeedbackPanel';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+
+type MissionFeedback = {
+  isCorrect: boolean;
+  text: string;
+  whatWasCorrect?: string[];
+  whatWasWrong?: string[];
+  suggestedCorrection?: string;
+  idealAnswer?: string;
+  xpEarned?: number;
+};
+
+function normalizeFeedbackList(value?: string | string[] | null) {
+  if (!value) return undefined;
+  return Array.isArray(value) ? value : [value];
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return fallback;
+}
 
 export default function MissionDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -13,23 +46,23 @@ export default function MissionDetail() {
   const { t, i18n } = useTranslation();
   
   const [mission, setMission] = useState<Mission | null>(null);
-  const [access, setAccess] = useState<any>(null);
-  const [scenario, setScenario] = useState<any>(null);
-  const [guidedSteps, setGuidedSteps] = useState<any[]>([]);
-  const [options, setOptions] = useState<any[]>([]);
+  const [access, setAccess] = useState<MissionAccessResponse | null>(null);
+  const [scenario, setScenario] = useState<MissionScenario | null>(null);
+  const [guidedSteps, setGuidedSteps] = useState<GuidedStep[]>([]);
+  const [options, setOptions] = useState<MissionOption[]>([]);
   const [currentStepIdx, setCurrentStepIdx] = useState(0);
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [answer, setAnswer] = useState('');
-  const [feedback, setFeedback] = useState<any>(null);
+  const [feedback, setFeedback] = useState<MissionFeedback | null>(null);
   const [relatedLesson, setRelatedLesson] = useState<TheoryLesson | null>(null);
   const [lessonProgress, setLessonProgress] = useState<TheoryProgress | null>(null);
   const [track, setTrack] = useState<Track | null>(null);
 
   // Checkpoint states
   const [checkpointAnswer, setCheckpointAnswer] = useState('');
-  const [checkpointFeedback, setCheckpointFeedback] = useState<any>(null);
+  const [checkpointFeedback, setCheckpointFeedback] = useState<CheckpointResultResponse | null>(null);
   const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
@@ -79,11 +112,11 @@ export default function MissionDetail() {
                 try {
                    const p = await api.getLessonProgress(relLesson.id);
                    setLessonProgress(p);
-                } catch(e) {}
+                } catch {}
               }
             }
-          } catch (err: any) {
-             if (err.message === 'Not authenticated' || !user) {
+          } catch (err) {
+             if (getErrorMessage(err, '') === 'Not authenticated' || !user) {
                // Let it be null, handled below
              }
           }
@@ -109,10 +142,10 @@ export default function MissionDetail() {
       setFeedback({
         isCorrect: result.correct,
         text: result.feedback,
-        whatWasCorrect: result.whatWasCorrect,
-        whatWasWrong: result.whatWasWrong,
-        suggestedCorrection: result.suggestedCorrection,
-        idealAnswer: result.idealAnswer,
+        whatWasCorrect: normalizeFeedbackList(result.whatWasCorrect),
+        whatWasWrong: normalizeFeedbackList(result.whatWasWrong),
+        suggestedCorrection: result.suggestedCorrection ?? undefined,
+        idealAnswer: result.idealAnswer ?? undefined,
         xpEarned: result.xpEarned
       });
       
@@ -120,10 +153,10 @@ export default function MissionDetail() {
         user.totalXp = result.userTotalXp;
         user.level = result.userLevel;
       }
-    } catch (err: any) {
+    } catch (err) {
       setFeedback({
         isCorrect: false,
-        text: err.message || t('mission.submit_error', 'Erro ao submeter resposta. Tente novamente.')
+        text: getErrorMessage(err, t('mission.submit_error', 'Erro ao submeter resposta. Tente novamente.'))
       });
     } finally {
       setIsSubmitting(false);
@@ -138,7 +171,7 @@ export default function MissionDetail() {
     try {
       const result = await api.checkGuidedStep(mission.id, stepId, checkpointAnswer);
       setCheckpointFeedback(result);
-    } catch (err: any) {
+    } catch {
       setCheckpointFeedback({
         correct: false,
         feedback: t('mission.check_error', 'Erro ao verificar. Tente novamente.')

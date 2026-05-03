@@ -18,6 +18,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+frontend/dev-server.out.log
+frontend/dev-server.err.log
+
+# Frontend cache
+frontend/.vite-cache/
 
 # Docker
 docker-compose.override.yml

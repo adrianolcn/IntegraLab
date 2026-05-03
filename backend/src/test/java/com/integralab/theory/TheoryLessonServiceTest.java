@@ -3,21 +3,21 @@ package com.integralab.theory;
 import com.integralab.tracks.LearningModule;
 import com.integralab.tracks.LearningModuleRepository;
 import com.integralab.tracks.MissionRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class TheoryLessonServiceTest {
 
     @Mock
@@ -32,16 +32,9 @@ class TheoryLessonServiceTest {
     @InjectMocks
     private TheoryLessonService theoryLessonService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void testGetLessonsByModuleSlug_AcceptLanguageFallback() {
-        UUID moduleId = UUID.randomUUID();
         LearningModule module = new LearningModule();
-        // Just setting up enough for the mock to return it
         when(learningModuleRepository.findBySlug("test-slug")).thenReturn(Optional.of(module));
 
         TheoryLesson lesson = new TheoryLesson();
@@ -60,7 +53,6 @@ class TheoryLessonServiceTest {
     
     @Test
     void testGetLessonsByModuleSlug_EmptyListWhenNoLessons() {
-        UUID moduleId = UUID.randomUUID();
         LearningModule module = new LearningModule();
         when(learningModuleRepository.findBySlug("empty-slug")).thenReturn(Optional.of(module));
         

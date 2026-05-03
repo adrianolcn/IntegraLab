@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../../lib/api';
+import { api, type SandboxResponse } from '../../../lib/api';
 
 type SandboxPreset = {
   method: string;
@@ -66,22 +66,25 @@ export default function HttpSandboxPanel({ missionSlug }: HttpSandboxPanelProps)
   const [headers, setHeaders] = useState<{key: string, value: string}[]>([]);
   const [body, setBody] = useState('');
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<any>(null);
+  const [response, setResponse] = useState<SandboxResponse | null>(null);
   
-  const currentPreset = (missionSlug && presets[missionSlug]) ? presets[missionSlug] : fallbackPreset;
+  const currentPreset = useMemo(
+    () => ((missionSlug && presets[missionSlug]) ? presets[missionSlug] : fallbackPreset),
+    [missionSlug]
+  );
   const hasPreset = !!(missionSlug && presets[missionSlug]);
 
-  const applyPreset = (preset: SandboxPreset) => {
+  const applyPreset = useCallback((preset: SandboxPreset) => {
     setMethod(preset.method);
     setPath(preset.path);
     setHeaders([...preset.headers]);
     setBody(preset.body);
     setResponse(null);
-  };
+  }, []);
 
   useEffect(() => {
     applyPreset(currentPreset);
-  }, [missionSlug]);
+  }, [applyPreset, currentPreset]);
 
   const handleAddHeader = () => {
     setHeaders([...headers, { key: '', value: '' }]);
@@ -112,7 +115,7 @@ export default function HttpSandboxPanel({ missionSlug }: HttpSandboxPanelProps)
     if (body.trim() !== '') {
       try {
         parsedBody = JSON.parse(body);
-      } catch (e) {
+      } catch {
         setResponse({
           statusCode: 400,
           statusText: 'Bad Request',
@@ -133,18 +136,14 @@ export default function HttpSandboxPanel({ missionSlug }: HttpSandboxPanelProps)
         body: parsedBody
       });
       setResponse(res);
-    } catch (error: any) {
-      if (error.response?.data) {
-        setResponse(error.response.data);
-      } else {
-        setResponse({
-          statusCode: 500,
-          statusText: 'Internal Server Error',
-          responseBody: { error: error.message },
-          logs: ['Network or unexpected error occurred.'],
-          hints: []
-        });
-      }
+    } catch (error) {
+      setResponse({
+        statusCode: 500,
+        statusText: 'Internal Server Error',
+        responseBody: { error: error instanceof Error ? error.message : 'Unknown error' },
+        logs: ['Network or unexpected error occurred.'],
+        hints: []
+      });
     } finally {
       setLoading(false);
     }

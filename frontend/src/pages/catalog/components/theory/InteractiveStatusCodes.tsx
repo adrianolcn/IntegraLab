@@ -6,6 +6,13 @@ interface InteractiveStatusCodesProps {
   glossaryJson?: string;
 }
 
+interface StatusCodeDetail {
+  code: string;
+  title: string;
+  meaning: string;
+  when: string;
+}
+
 export default function InteractiveStatusCodes({ glossaryJson }: InteractiveStatusCodesProps) {
   const { t } = useTranslation();
   const [activeFamily, setActiveFamily] = useState('2xx');
@@ -18,7 +25,7 @@ export default function InteractiveStatusCodes({ glossaryJson }: InteractiveStat
     { id: '5xx', label: '5xx', desc: t('status.5xx.desc', 'Erro do Servidor') },
   ];
 
-  const codes: Record<string, any[]> = {
+  const codes: Record<string, StatusCodeDetail[]> = {
     '2xx': [
       { code: '200', title: 'OK', meaning: t('status.200.meaning', 'Requisição bem sucedida.'), when: t('status.200.when', 'Usado principalmente em requisições {{GET}} para devolver dados e em {{PUT}}/{{PATCH}} ao atualizar registros.') },
       { code: '201', title: 'Created', meaning: t('status.201.meaning', 'Recurso criado com sucesso.'), when: t('status.201.when', 'A resposta correta e semântica para um {{POST}} bem sucedido.') },

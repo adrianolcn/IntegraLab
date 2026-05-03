@@ -45,6 +45,7 @@
 - [Migrations com Flyway](#migrations-com-flyway)
 - [Testes e validação](#testes-e-validacao)
 - [Documentação técnica](#documentacao-tecnica)
+- [Troubleshooting](#troubleshooting)
 - [Funcionalidades implementadas](#funcionalidades-implementadas)
 - [Segurança](#seguranca)
 - [Roadmap](#roadmap)
@@ -637,6 +638,21 @@ Principais arquivos:
 | `sandbox-http.md` | Funcionamento do sandbox |
 | `roadmap.md` | Próximos passos do produto |
 | `contributing.md` | Guia de contribuição |
+| `troubleshooting.md` | Recuperação de ambiente local |
+
+[Voltar ao topo](#sumario)
+
+---
+
+<a id="troubleshooting"></a>
+
+## Troubleshooting
+
+📎 Problemas locais conhecidos e passos de recuperação ficam em:
+
+```text
+docs/troubleshooting.md
+```
 
 [Voltar ao topo](#sumario)
 

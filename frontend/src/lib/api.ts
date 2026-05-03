@@ -102,6 +102,116 @@ export interface Mission {
   errorFeedback?: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest extends LoginRequest {
+  name: string;
+}
+
+export interface GuidedStep {
+  id: string;
+  title: string;
+  content: string;
+  example?: string | null;
+  commonMistake?: string | null;
+  checkpointQuestion?: string | null;
+  checkpointAnswer?: string | null;
+  explanation?: string | null;
+  orderIndex?: number;
+}
+
+export interface MissionAccessResponse {
+  accessStatus: string;
+  lockedReason?: string | null;
+  previousMissionSlug?: string | null;
+}
+
+export interface CheckpointResultResponse {
+  correct: boolean;
+  feedback: string;
+  idealAnswer?: string | null;
+  conceptReviewed?: string | null;
+  nextStepSuggestion?: string | null;
+}
+
+export interface AttemptResultResponse {
+  correct: boolean;
+  feedback: string;
+  whatWasCorrect?: string | null;
+  whatWasWrong?: string | null;
+  suggestedCorrection?: string | null;
+  idealAnswer?: string | null;
+  xpEarned: number;
+  userTotalXp: number;
+  userLevel: number;
+}
+
+export interface MissionScenarioNode {
+  nodeKey: string;
+  label: string;
+  nodeType?: string | null;
+  description?: string | null;
+}
+
+export interface MissionScenarioStep {
+  fromNodeKey: string;
+  toNodeKey: string;
+  stepType?: string | null;
+  status?: string | null;
+  method?: string | null;
+  path?: string | null;
+  statusCode?: number | null;
+  logMessage?: string | null;
+  payloadExample?: string | null;
+  responseExample?: string | null;
+  orderIndex?: number;
+}
+
+export interface MissionScenario {
+  id: string;
+  missionId: string;
+  title: string;
+  description: string;
+  explanation?: string | null;
+  initialRequestJson?: string | null;
+  simulatedResponseJson?: string | null;
+  nodes: MissionScenarioNode[];
+  steps: MissionScenarioStep[];
+}
+
+export interface SandboxRequest {
+  method: string;
+  path: string;
+  headers: Record<string, string>;
+  body: unknown;
+}
+
+export interface SandboxResponse {
+  statusCode: number;
+  statusText: string;
+  responseHeaders?: Record<string, string>;
+  responseBody?: unknown;
+  logs: string[];
+  hints: string[];
+}
+
+export interface ProgressResponse {
+  totalXp?: number;
+  level?: number;
+  completedMissions?: number;
+  [key: string]: unknown;
+}
+
+export interface BadgeSummary {
+  id: string;
+  name?: string;
+  description?: string;
+  icon?: string;
+}
+
 function getHeaders(token?: string | null) {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -121,7 +231,7 @@ export const api = {
     return response.json();
   },
 
-  async login(data: any): Promise<AuthResponse> {
+  async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -131,7 +241,7 @@ export const api = {
     return response.json();
   },
 
-  async register(data: any): Promise<AuthResponse> {
+  async register(data: RegisterRequest): Promise<AuthResponse> {
     const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -191,13 +301,13 @@ export const api = {
     return response.json();
   },
 
-  async getGuidedSteps(missionId: string): Promise<any[]> {
+  async getGuidedSteps(missionId: string): Promise<GuidedStep[]> {
     const response = await fetch(`${API_BASE_URL}/api/missions/${missionId}/guided-steps`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Failed to fetch guided steps');
     return response.json();
   },
 
-  async getMissionScenario(missionId: string): Promise<any> {
+  async getMissionScenario(missionId: string): Promise<MissionScenario> {
     const response = await fetch(`${API_BASE_URL}/api/missions/${missionId}/scenario`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Failed to fetch scenario');
     return response.json();
@@ -210,13 +320,13 @@ export const api = {
     return response.json();
   },
 
-  async getMissionAccess(missionId: string): Promise<any> {
+  async getMissionAccess(missionId: string): Promise<MissionAccessResponse> {
     const response = await fetch(`${API_BASE_URL}/api/missions/${missionId}/access`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Failed to fetch access status');
     return response.json();
   },
 
-  async checkGuidedStep(missionId: string, stepId: string, answer: string): Promise<any> {
+  async checkGuidedStep(missionId: string, stepId: string, answer: string): Promise<CheckpointResultResponse> {
     const response = await fetch(`${API_BASE_URL}/api/missions/${missionId}/guided-steps/${stepId}/check`, {
       method: 'POST',
       headers: getHeaders(),
@@ -226,7 +336,7 @@ export const api = {
     return response.json();
   },
 
-  async submitAttempt(missionId: string, answer: string): Promise<any> {
+  async submitAttempt(missionId: string, answer: string): Promise<AttemptResultResponse> {
     const response = await fetch(`${API_BASE_URL}/api/missions/${missionId}/attempts`, {
       method: 'POST',
       headers: getHeaders(),
@@ -254,19 +364,19 @@ export const api = {
     return response.json();
   },
 
-  async getMyProgress(): Promise<any> {
+  async getMyProgress(): Promise<ProgressResponse> {
     const response = await fetch(`${API_BASE_URL}/api/progress/me`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Failed to fetch progress');
     return response.json();
   },
 
-  async getMyBadges(): Promise<any[]> {
+  async getMyBadges(): Promise<BadgeSummary[]> {
     const response = await fetch(`${API_BASE_URL}/api/badges/me`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Failed to fetch badges');
     return response.json();
   },
 
-  async runSandboxRequest(requestData: any): Promise<any> {
+  async runSandboxRequest(requestData: SandboxRequest): Promise<SandboxResponse> {
     const response = await fetch(`${API_BASE_URL}/api/sandbox/http/request`, {
       method: 'POST',
       headers: getHeaders(),
@@ -276,8 +386,8 @@ export const api = {
     if (!response.ok) {
       const errText = await response.text();
       try {
-         return JSON.parse(errText);
-      } catch(e) {
+         return JSON.parse(errText) as SandboxResponse;
+      } catch {
          throw new Error(errText);
       }
     }
