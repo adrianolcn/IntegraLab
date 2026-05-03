@@ -32,14 +32,14 @@ export default function GlossaryList({ glossaryJson }: GlossaryListProps) {
         <svg className="w-5 h-5 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
         {t('lesson.glossary', 'Glossário Rápido')}
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         {items.map((item, i) => (
           <div key={i} className="bg-white dark:bg-slate-900/50 rounded-xl p-5 border border-borderSubtle shadow-sm hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors">
-            <dt className="font-extrabold text-lg text-indigo-700 dark:text-indigo-400 mb-1 flex items-baseline gap-2">
+            <dt className="mb-1 flex flex-wrap items-baseline gap-2 text-lg font-extrabold text-indigo-700 dark:text-indigo-400">
               {item.term}
-              {item.acronym && <span className="text-xs font-mono text-slate-500 font-normal">({item.acronym})</span>}
+              {item.acronym && <span className="break-words text-xs font-mono font-normal text-slate-500">({item.acronym})</span>}
             </dt>
-            <dd className="text-sm text-textMain mb-3 leading-relaxed">{item.definition}</dd>
+            <dd className="mb-3 text-sm leading-relaxed text-textMain">{item.definition}</dd>
             
             {(item.importance || item.example || item.lessonContext) && (
               <dd className="mt-auto space-y-2 pt-3 border-t border-borderSubtle">
@@ -50,7 +50,7 @@ export default function GlossaryList({ glossaryJson }: GlossaryListProps) {
                   </div>
                 )}
                 {item.example && (
-                  <div className="bg-slate-50 dark:bg-slate-800 p-2 rounded text-xs font-mono text-textMain border border-borderSubtle break-words">
+                  <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded text-xs leading-relaxed font-mono text-textMain border border-borderSubtle break-words whitespace-pre-wrap">
                     {item.example}
                   </div>
                 )}

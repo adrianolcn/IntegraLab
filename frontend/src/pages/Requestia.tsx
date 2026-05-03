@@ -46,23 +46,23 @@ export default function Requestia() {
       <div className="absolute top-[40%] right-[10%] w-[400px] h-[400px] bg-purple-600/10 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] -z-10 animate-pulse" style={{ animationDelay: '3s' }}></div>
 
       {toastMessage && (
-        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-white text-slate-900 dark:bg-slate-800 dark:text-white px-6 py-3 rounded-full shadow-lg border border-slate-200 dark:border-borderSubtle z-50 animate-bounce">
+        <div className="fixed left-1/2 top-24 z-50 max-w-[calc(100vw-32px)] -translate-x-1/2 rounded-full border border-slate-200 bg-white px-5 py-3 text-center text-sm text-slate-900 shadow-lg animate-bounce dark:border-borderSubtle dark:bg-slate-800 dark:text-white">
           {toastMessage}
         </div>
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        <div className="mb-16 glass-panel-elevated p-10 rounded-3xl text-center relative overflow-hidden">
+        <div className="relative mb-12 overflow-hidden rounded-3xl glass-panel-elevated p-6 text-center sm:p-8 lg:mb-16 lg:p-10">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 z-0"></div>
-          <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400 mb-4 relative z-10 drop-shadow-sm">
+          <h1 className="relative z-10 mb-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-4xl font-black text-transparent drop-shadow-sm dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400 sm:text-5xl">
             {t('requestia.title', 'Mapa de Requestia')}
           </h1>
-          <p className="mt-4 text-xl text-textMuted font-medium max-w-2xl mx-auto relative z-10">
+          <p className="relative z-10 mx-auto mt-4 max-w-2xl text-base font-medium leading-relaxed text-textMuted sm:text-lg lg:text-xl">
             {t('requestia.subtitle', 'Explore as regiões deste mundo cibernético e desvende os mistérios da comunicação entre sistemas.')}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-6 md:[grid-template-columns:repeat(auto-fit,minmax(260px,1fr))] lg:gap-8">
           {regions.map((region, idx) => {
             const isAvailable = region.status === 'Disponível';
             
@@ -70,13 +70,13 @@ export default function Requestia() {
               <>
                 <div className="absolute inset-0 bg-white/40 dark:bg-surface/60 z-0"></div>
                 
-                <div className="relative z-10 flex justify-between items-start mb-6">
-                  <h3 className={`text-2xl font-bold ${isAvailable ? 'text-textMain group-hover:text-primary-600 dark:group-hover:text-primary-300' : 'text-textMuted'} transition-colors`}>{region.name}</h3>
-                  <span className={`text-xs px-3 py-1 rounded-full font-bold tracking-wider ${isAvailable ? 'bg-primary-100 text-primary-600 border border-primary-200 dark:bg-primary-500/20 dark:text-primary-300 dark:border-primary-500/30' : 'bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
+                <div className="relative z-10 mb-6 flex min-w-0 items-start justify-between gap-3">
+                  <h3 className={`min-w-0 text-xl font-bold leading-tight sm:text-2xl ${isAvailable ? 'text-textMain group-hover:text-primary-600 dark:group-hover:text-primary-300' : 'text-textMuted'} transition-colors`}>{region.name}</h3>
+                  <span className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-bold tracking-[0.12em] ${isAvailable ? 'bg-primary-100 text-primary-600 border border-primary-200 dark:bg-primary-500/20 dark:text-primary-300 dark:border-primary-500/30' : 'bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700'}`}>
                     {getStatusLabel(region.status)}
                   </span>
                 </div>
-                <p className="relative z-10 text-textMuted leading-relaxed font-medium">{region.desc}</p>
+                <p className="relative z-10 text-sm font-medium leading-relaxed text-textMuted sm:text-base">{region.desc}</p>
                 
                 {isAvailable && (
                   <div className="relative z-10 mt-6 pt-4 border-t border-borderSubtle flex justify-end">
@@ -89,11 +89,11 @@ export default function Requestia() {
             );
 
             return isAvailable ? (
-              <Link key={idx} to={region.to!} className={cardClassName(true)}>
+              <Link key={idx} to={region.to!} className={`${cardClassName(true)} min-h-[224px]`}>
                 {content}
               </Link>
             ) : (
-              <div key={idx} onClick={handleSoonClick} className={cardClassName(false)}>
+              <div key={idx} onClick={handleSoonClick} className={`${cardClassName(false)} min-h-[224px]`}>
                 {content}
               </div>
             );

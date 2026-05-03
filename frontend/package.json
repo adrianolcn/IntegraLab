@@ -7,6 +7,7 @@
     "dev": "vite --configLoader native",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "validate:theory": "node ./scripts/validate-theory-content.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

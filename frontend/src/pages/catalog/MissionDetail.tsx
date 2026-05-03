@@ -217,12 +217,12 @@ export default function MissionDetail() {
       <div className="absolute top-0 right-0 w-full h-[40vh] bg-gradient-to-b from-primary-900/10 to-transparent -z-10"></div>
       
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="mb-6 flex justify-between items-center">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <Link to={trackHref} className="text-sm font-bold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 flex items-center transition-colors">
             <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
             {t('mission.back_track', 'Voltar para a Trilha')}
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
             {access && access.accessStatus === 'COMPLETED' && (
                <span className="text-xs font-bold text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/30 px-3 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-500/50 flex items-center shadow-sm">
                  <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
@@ -241,8 +241,8 @@ export default function MissionDetail() {
         <div className="bg-surface backdrop-blur-xl rounded-3xl border border-borderSubtle shadow-xl overflow-hidden relative">
           <div className="bg-slate-50/50 dark:bg-slate-800/80 p-8 border-b border-borderSubtle relative overflow-hidden">
             <div className="absolute right-0 top-0 w-64 h-64 bg-primary-500/10 rounded-full blur-[60px] translate-x-1/3 -translate-y-1/3"></div>
-            <h1 className="text-4xl font-black text-textMain tracking-tight relative z-10">{mission.title}</h1>
-            <p className="mt-3 text-lg text-textMuted relative z-10">{mission.objective}</p>
+            <h1 className="relative z-10 text-4xl font-black tracking-tight text-textMain">{mission.title}</h1>
+            <p className="relative z-10 mt-3 text-base leading-relaxed text-textMuted sm:text-lg">{mission.objective}</p>
           </div>
           
           {relatedLesson && (!lessonProgress || !lessonProgress.completedAt) && (
@@ -309,7 +309,7 @@ export default function MissionDetail() {
                             {t('mission.checkpoint', 'Checkpoint Rápido')}
                           </h5>
                           <p className="text-textMuted mb-3">{currentStep.checkpointQuestion}</p>
-                          <div className="flex gap-3">
+                          <div className="flex flex-col gap-3 sm:flex-row">
                             <input
                               type="text"
                               value={checkpointAnswer}
@@ -369,7 +369,7 @@ export default function MissionDetail() {
 
             {/* Simulation Scenario Flow */}
             {user && scenario && (
-              <div className="bg-slate-50 dark:bg-slate-900/40 rounded-2xl p-6 border border-borderSubtle shadow-inner">
+              <div className="bg-slate-50 dark:bg-slate-900/40 rounded-2xl p-4 sm:p-6 border border-borderSubtle shadow-inner">
                 <h3 className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
                   {t('mission.sim_scenario', 'Simulação da Requisição')}
@@ -394,19 +394,19 @@ export default function MissionDetail() {
                      </label>
                      
                      {options.length > 0 ? (
-                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                          {options.map((opt) => (
                            <button
                              key={opt.id}
                              type="button"
                              onClick={() => setAnswer(opt.value)}
-                             className={`text-left p-4 rounded-xl border-2 transition-all ${
+                             className={`min-w-0 rounded-xl border-2 p-4 text-left transition-all ${
                                answer === opt.value 
                                  ? 'bg-primary-50 dark:bg-primary-900/40 border-primary-500 shadow-sm dark:shadow-[0_0_15px_rgba(59,130,246,0.4)]' 
                                  : 'bg-white dark:bg-slate-800/60 border-borderSubtle hover:border-slate-300 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700/60'
                              }`}
                            >
-                             <div className="font-bold text-textMain text-lg">{opt.label}</div>
+                             <div className="break-words text-lg font-bold text-textMain">{opt.label}</div>
                            </button>
                          ))}
                        </div>

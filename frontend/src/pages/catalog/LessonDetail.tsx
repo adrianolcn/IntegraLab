@@ -133,13 +133,13 @@ export default function LessonDetail() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Link to={backLink} className="inline-flex items-center text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
           <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
           {backLabel}
         </Link>
         {!user && (
-          <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full">
+          <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs text-slate-500 dark:bg-slate-800">
             {t('theoryProgress.signInToSave', 'Entre na sua conta para salvar seu progresso.')}
           </span>
         )}
@@ -159,8 +159,8 @@ export default function LessonDetail() {
             </span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-extrabold text-textMain leading-tight mb-6">{lesson.title}</h1>
-          <p className="text-xl text-textMuted leading-relaxed">{lesson.summary}</p>
+          <h1 className="mb-6 text-4xl font-extrabold leading-tight text-textMain md:text-5xl">{lesson.title}</h1>
+          <p className="text-lg leading-relaxed text-textMuted sm:text-xl">{lesson.summary}</p>
           {(track || module) && (
             <div className="mt-6 flex flex-wrap gap-2 text-xs font-bold text-slate-500 dark:text-slate-400">
               {track && <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-borderSubtle">{track.title}</span>}
@@ -443,7 +443,7 @@ export default function LessonDetail() {
         </div>
 
         {/* 12. CTAs */}
-        <div className="bg-slate-50/80 dark:bg-slate-800/80 p-8 border-t border-borderSubtle flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <div className="flex flex-col gap-4 border-t border-borderSubtle bg-slate-50/80 p-6 dark:bg-slate-800/80 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex gap-4 w-full sm:w-auto">
             {user && (
               <button 

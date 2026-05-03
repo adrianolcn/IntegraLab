@@ -188,7 +188,7 @@ export default function RequestResponseCyclePlayer({ glossaryJson }: RequestResp
       <div className="border-b border-borderSubtle bg-slate-950 px-5 py-6 md:px-6">
         <div className="relative">
           <div className="absolute left-4 right-4 top-8 hidden border-t border-dashed border-slate-700 md:block" />
-          <div className="grid grid-cols-2 gap-3 md:[grid-template-columns:repeat(auto-fit,minmax(132px,1fr))] md:gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 md:gap-4">
             {stageOrder.map((stage, index) => {
               const isActive = index === currentStageIndex;
               const isDone = index < currentStageIndex;
@@ -223,7 +223,7 @@ export default function RequestResponseCyclePlayer({ glossaryJson }: RequestResp
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d={stage.iconPath} />
                     </svg>
                   </div>
-                  <span className="mt-3 break-words text-[10px] font-bold uppercase leading-snug tracking-[0.08em] text-slate-400">
+                  <span className="mt-3 break-words text-[11px] font-bold leading-snug tracking-[0.04em] text-slate-300">
                     {stage.label}
                   </span>
                 </button>
@@ -238,12 +238,12 @@ export default function RequestResponseCyclePlayer({ glossaryJson }: RequestResp
               <p className="text-[11px] font-black uppercase tracking-[0.10em] text-slate-500">
                 {t('rrCycle.packetLabel')}
               </p>
-              <p className="mt-1 break-words font-mono text-sm text-slate-100">
+              <p className="mt-1 break-words font-mono text-sm leading-relaxed text-slate-100">
                 {current.packet}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(140px,1fr))] lg:flex-1">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 lg:flex-1">
               <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-3">
                 <p className="text-[11px] font-bold uppercase tracking-[0.10em] text-slate-500">
                   {t('rrCycle.phaseLabel')}
@@ -288,10 +288,10 @@ export default function RequestResponseCyclePlayer({ glossaryJson }: RequestResp
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            <div className="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-5 dark:border-indigo-900/40 dark:bg-indigo-950/30">
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-300">
-                {t('rrCycle.readingHintTitle')}
-              </p>
+              <div className="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-5 dark:border-indigo-900/40 dark:bg-indigo-950/30">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-300">
+                  {t('rrCycle.readingHintTitle')}
+                </p>
               <p className="mt-3 text-sm leading-relaxed text-indigo-950 dark:text-indigo-100/90">
                 <ConceptText text={t(`rrCycle.steps.${current.id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())}.hint`)} glossaryJson={glossaryJson} />
               </p>
@@ -301,16 +301,16 @@ export default function RequestResponseCyclePlayer({ glossaryJson }: RequestResp
               <p className="text-xs font-black uppercase tracking-[0.18em] text-textMuted">
                 {t('rrCycle.sequenceLabel')}
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {steps.map((item, index) => (
-                  <button
-                    key={item.id}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {steps.map((item, index) => (
+                    <button
+                      key={item.id}
                     type="button"
                     onClick={() => {
                       setIsPlaying(false);
                       setStep(index);
                     }}
-                    className={`max-w-full rounded-full px-3 py-1.5 text-left text-xs font-bold leading-snug transition-colors ${
+                    className={`max-w-full rounded-2xl px-3 py-2 text-left text-xs font-bold leading-snug transition-colors ${
                       index === step
                         ? 'bg-indigo-600 text-white'
                         : index < step

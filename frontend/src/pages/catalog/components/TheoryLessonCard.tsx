@@ -21,7 +21,7 @@ export default function TheoryLessonCard({ lesson, progress }: TheoryLessonCardP
           </div>
         </div>
         <div className="min-w-0">
-          <h4 className="flex flex-wrap items-center gap-2 text-lg font-bold text-textMain">
+          <h4 className="flex flex-wrap items-center gap-2 text-lg font-bold leading-snug text-textMain">
             {lesson.title}
             
             {/* Status Chips */}
@@ -47,7 +47,7 @@ export default function TheoryLessonCard({ lesson, progress }: TheoryLessonCardP
               </span>
             )}
           </h4>
-          <p className="mt-1 line-clamp-2 text-sm text-textMuted">{lesson.summary}</p>
+          <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-textMuted">{lesson.summary}</p>
           
           {(() => {
             if (!lesson.learningObjectives) return null;
@@ -78,10 +78,10 @@ export default function TheoryLessonCard({ lesson, progress }: TheoryLessonCardP
         </div>
       </div>
       
-      <div className="shrink-0 flex justify-end mt-4 sm:mt-0">
+      <div className="mt-4 flex shrink-0 justify-end sm:mt-0">
         <Link 
           to={`/lessons/${lesson.id}`} 
-          className="bg-indigo-600 text-white hover:bg-indigo-500 px-5 py-2.5 rounded-xl text-sm font-bold border border-indigo-500 transition-colors shadow-sm dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] text-center flex items-center justify-center"
+          className="flex w-full items-center justify-center rounded-xl border border-indigo-500 bg-indigo-600 px-5 py-2.5 text-center text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-500 dark:shadow-[0_0_15px_rgba(99,102,241,0.4)] sm:w-auto"
         >
           {t('lesson.studyConcept', 'Estudar conceito')}
           <svg className="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>

@@ -273,7 +273,7 @@ export default function InteractiveFlowPlayer({ flowJson, glossaryJson }: Intera
         </div>
 
         <div
-          className="mt-0 grid grid-cols-1 gap-3 md:mt-5 md:[grid-template-columns:repeat(auto-fit,minmax(240px,1fr))] 2xl:[grid-template-columns:repeat(auto-fit,minmax(250px,1fr))]"
+          className="mt-0 grid grid-cols-1 gap-3 md:mt-5 md:[grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]"
         >
           {steps.map((step, index) => {
             const visual = resolveStepVisual(step.id);
@@ -323,7 +323,7 @@ export default function InteractiveFlowPlayer({ flowJson, glossaryJson }: Intera
                   <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.06em] text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                     {t('interactiveFlow.stepShort', 'Etapa')} {index + 1}
                   </span>
-                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold tracking-[0.02em] text-slate-600 dark:bg-slate-800 dark:text-slate-300 break-words">
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold leading-snug tracking-[0.01em] text-slate-600 break-words dark:bg-slate-800 dark:text-slate-300">
                     {visual.phase === 'request'
                       ? t('interactiveFlow.requestPhase', 'Request')
                       : visual.phase === 'processing'
@@ -332,10 +332,10 @@ export default function InteractiveFlowPlayer({ flowJson, glossaryJson }: Intera
                   </span>
                 </div>
 
-                <h4 className="mt-3 min-h-[3.5rem] text-base font-black leading-snug text-textMain sm:text-[17px]">
+                <h4 className="mt-3 min-h-[3.8rem] break-words text-base font-black leading-snug text-textMain sm:text-[17px]">
                   {stripStepNumber(step.title)}
                 </h4>
-                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-textMain/70">
+                <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-textMain/70">
                   {step.description}
                 </p>
               </button>

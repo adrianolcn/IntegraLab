@@ -441,7 +441,7 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
+          <div className="grid grid-cols-1 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
             <div className="min-w-0 rounded-2xl border border-borderSubtle bg-white/90 px-4 py-3 dark:bg-slate-900/80">
               <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{t('flow.method', 'Método')}</div>
               <div className="mt-1 text-sm font-black text-textMain">{steps[0]?.method || initialRequestPreview?.method || 'GET'}</div>
@@ -527,7 +527,7 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-0 xl:grid-cols-[320px_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-0 xl:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]">
         <div className="border-b border-borderSubtle bg-slate-50/80 p-5 dark:border-slate-800 dark:bg-slate-950/45 xl:border-b-0 xl:border-r">
           <div className="mb-4">
             <p className="text-xs font-black uppercase tracking-[0.12em] text-textMuted">
@@ -570,8 +570,8 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
                         </span>
                       )}
                     </div>
-                    <h4 className={`mt-3 break-words font-black leading-snug text-textMain ${
-                      stage.id === 'request' || stage.id === 'endpoint' ? 'font-mono text-[13px]' : 'text-base'
+                    <h4 className={`mt-3 font-black leading-snug text-textMain ${
+                      stage.id === 'request' || stage.id === 'endpoint' ? 'font-mono text-[13px] break-all' : 'text-base break-words'
                     }`}>
                       {stage.title}
                     </h4>
@@ -658,7 +658,7 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
                   <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
                     {t('flow.requestPreview', 'Request relacionado')}
                   </p>
-                  <pre className="mt-3 max-h-[220px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-borderSubtle bg-white p-4 text-xs text-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
+                  <pre className="mt-3 max-h-[220px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-borderSubtle bg-white p-4 text-xs leading-relaxed text-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
                     {requestPreview || <span className="italic text-slate-400">{t('flow.noPayload', 'Sem payload relevante nesta etapa.')}</span>}
                   </pre>
                 </div>
@@ -667,7 +667,7 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
                   <p className="text-xs font-black uppercase tracking-[0.1em] text-textMuted">
                     {t('flow.responsePreview', 'Response relacionado')}
                   </p>
-                  <pre className="mt-3 max-h-[220px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-borderSubtle bg-white p-4 text-xs text-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
+                  <pre className="mt-3 max-h-[220px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-borderSubtle bg-white p-4 text-xs leading-relaxed text-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
                     {responsePreview || <span className="italic text-slate-400">{t('flow.noResponse', 'Sem response detalhado nesta etapa.')}</span>}
                   </pre>
                 </div>
@@ -702,7 +702,7 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-3 md:[grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+                <div className="mt-4 grid grid-cols-1 gap-3 md:[grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
                   {steps.map((step, index) => {
                     const isActive = index === currentStepIndex;
                     const isPast = index < currentStepIndex || isFinished;
@@ -737,13 +737,13 @@ export default function FlowViewer({ scenario }: FlowViewerProps) {
                           </span>
                         </div>
 
-                        <h4 className={`mt-3 break-all font-black leading-snug text-textMain ${
+                        <h4 className={`mt-3 font-black leading-snug text-textMain ${
                           step.method ? 'font-mono text-sm' : 'text-base'
-                        }`} title={step.method ? `${step.method} ${step.path || ''}` : `${t('flow.response', 'Response')} ${step.statusCode || diagram.statusCode}`}>
+                        } ${step.method ? 'break-all' : 'break-words'}`} title={step.method ? `${step.method} ${step.path || ''}` : `${t('flow.response', 'Response')} ${step.statusCode || diagram.statusCode}`}>
                           {step.method ? `${step.method} ${step.path || ''}` : `${t('flow.response', 'Response')} ${step.statusCode || diagram.statusCode}`}
                         </h4>
 
-                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-textMuted">
+                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-textMuted">
                           {step.logMessage || t('flow.waiting', 'Aguardando')}
                         </p>
                       </button>

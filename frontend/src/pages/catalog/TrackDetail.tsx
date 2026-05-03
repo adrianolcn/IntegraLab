@@ -86,7 +86,7 @@ export default function TrackDetail() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-10">
         <h1 className="text-4xl font-extrabold text-textMain mb-4">{track.title}</h1>
-        <p className="text-xl text-textMuted glass-panel p-6 rounded-lg">
+        <p className="glass-panel rounded-lg p-6 text-lg leading-relaxed text-textMuted sm:text-xl">
           {track.description}
         </p>
       </div>
@@ -95,14 +95,14 @@ export default function TrackDetail() {
         {modules.map(({ module, lessons, missions }, idx) => (
           <div key={module.id} className="glass-panel-elevated rounded-xl overflow-hidden shadow-xl">
             <div className="bg-slate-50/50 dark:bg-slate-800/80 p-5 border-b border-borderSubtle">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <h2 className="text-2xl font-black text-textMain flex items-center">
+              <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                <h2 className="flex min-w-0 items-center text-2xl font-black text-textMain">
                   <span className="bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-400 text-sm py-1 px-3 rounded-lg mr-3 border border-primary-200 dark:border-primary-500/30">
                     {t('tracks.module', 'Módulo')} {idx + 1}
                   </span>
-                  {module.title}
+                  <span className="min-w-0 break-words">{module.title}</span>
                 </h2>
-                <div className="flex gap-4 text-xs font-bold text-slate-500 dark:text-slate-400">
+                <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold text-slate-500 dark:text-slate-400">
                   <span>{t('lesson.theoryBadge', 'Teoria')}: {lessons.filter(l => theoryMap[l.id]?.completedAt).length}/{lessons.length}</span>
                   <span>Quiz: {lessons.filter(l => theoryMap[l.id]?.quizAttemptedAt).length}/{lessons.length}</span>
                   <span>Missões: {missions.filter(m => accessMap[m.id]?.accessStatus === 'COMPLETED').length}/{missions.length}</span>
@@ -123,8 +123,8 @@ export default function TrackDetail() {
                 const isAvailable = access && access.accessStatus === 'AVAILABLE';
 
                 return (
-                  <div key={mission.id} className={`p-5 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4 ${isLocked ? 'bg-slate-50 dark:bg-slate-900/30 opacity-70 grayscale-[30%]' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-800/10'}`}>
-                    <div className="flex items-start gap-4">
+                  <div key={mission.id} className={`flex flex-col gap-4 p-5 transition-all lg:flex-row lg:items-center lg:justify-between ${isLocked ? 'bg-slate-50 dark:bg-slate-900/30 opacity-70 grayscale-[30%]' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40 bg-white dark:bg-slate-800/10'}`}>
+                    <div className="flex min-w-0 items-start gap-4">
                       <div className="mt-1">
                         {isLocked ? (
                           <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-borderSubtle flex items-center justify-center shadow-inner">
@@ -140,16 +140,16 @@ export default function TrackDetail() {
                           </div>
                         )}
                       </div>
-                      <div>
+                      <div className="min-w-0">
                          <h4 className={`text-lg font-bold ${isLocked ? 'text-textMuted' : 'text-textMain'}`}>
                            {mission.title}
                          </h4>
                          <p className="text-sm text-textMuted mt-1 line-clamp-2">{mission.description}</p>
-                         <div className="text-xs mt-2 flex gap-3 items-center">
+                         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
                            <span className={`uppercase font-black ${isLocked ? 'text-slate-400 dark:text-slate-500' : 'text-amber-500 dark:text-amber-400'}`}>{mission.xpReward} XP</span>
                            <span className={isLocked ? 'text-slate-400 dark:text-slate-600' : 'text-primary-500 dark:text-primary-300'}>{t('dashboard.level', 'Nível')} {mission.difficulty}</span>
                            {isLocked && access.lockedReason && (
-                             <span className="text-red-500 dark:text-red-400 flex items-center ml-2">
+                             <span className="flex items-center text-red-500 dark:text-red-400">
                                <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                {t('tracks.pending_req', 'Requisito pendente')}
                              </span>
@@ -158,7 +158,7 @@ export default function TrackDetail() {
                       </div>
                     </div>
                     
-                    <div className="shrink-0 flex sm:flex-col justify-end sm:items-end gap-2 mt-4 sm:mt-0">
+                    <div className="mt-2 flex shrink-0 flex-wrap justify-end gap-2 lg:mt-0 lg:flex-col lg:items-end">
                       {isLocked ? (
                         <Link to={`/missions/${mission.slug}`} className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-5 py-2.5 rounded-xl text-sm font-bold border border-borderSubtle transition-colors cursor-pointer text-center flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700">
                           <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>

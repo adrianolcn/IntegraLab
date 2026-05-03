@@ -511,7 +511,7 @@ docker ps
 
 ```powershell
 cd backend
-.\mvnw spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
 O backend ficará disponível em:
@@ -528,7 +528,7 @@ Em outro terminal:
 
 ```powershell
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -605,15 +605,62 @@ docker exec -it integralab-db psql -U integralab -d integralab -c "SELECT versio
 
 ```powershell
 cd backend
-.\mvnw clean compile test
+.\mvnw.cmd clean compile test
 ```
 
 ### Frontend
 
 ```powershell
 cd frontend
+npm ci
+npm run validate:theory
+npm run lint
 npm run build
 ```
+
+[Voltar ao topo](#sumario)
+
+---
+
+## Validação do projeto
+
+Antes de uma demonstração, push ou PR, este é o fluxo recomendado:
+
+### Backend
+
+```powershell
+cd backend
+.\mvnw.cmd clean compile test
+```
+
+### Frontend
+
+```powershell
+cd frontend
+npm ci
+npm run validate:theory
+npm run lint
+npm run build
+```
+
+Para validar o frontend em modo de desenvolvimento:
+
+```powershell
+cd frontend
+npm run dev
+```
+
+Depois teste:
+
+```text
+http://localhost:5173
+```
+
+O comando `validate:theory` verifica:
+
+- `{{ConceptNotes}}` sem entrada correspondente no glossário;
+- JSON inválido em `glossary`, `miniQuiz` e campos interativos;
+- blocos `[[BLOCO]]` sem renderização conhecida em `LessonDetail`.
 
 [Voltar ao topo](#sumario)
 
@@ -653,6 +700,13 @@ Principais arquivos:
 ```text
 docs/troubleshooting.md
 ```
+
+Se o Vite falhar no Windows com erro `EPERM` durante o `npm run dev`, consulte primeiro esse guia. Ele cobre:
+
+- encerramento de processos `node`/`vite` antigos;
+- limpeza segura de `node_modules` e `.vite-cache`;
+- novo `npm ci`;
+- `npm rebuild` quando necessário.
 
 [Voltar ao topo](#sumario)
 
@@ -783,11 +837,13 @@ Antes de abrir PR:
 
 ```powershell
 cd backend
-.\mvnw clean compile test
+.\mvnw.cmd clean compile test
 ```
 
 ```powershell
 cd frontend
+npm run validate:theory
+npm run lint
 npm run build
 ```
 
