@@ -681,6 +681,7 @@ Principais arquivos:
 | Documento | Descrição |
 |---|---|
 | `learning-design.md` | Regras pedagógicas e padrão de aulas |
+| `deployment.md` | Preparação de deploy, variáveis e checklist pré-publicação |
 | `theory-engine.md` | Motor de teoria interativa |
 | `sandbox-http.md` | Funcionamento do sandbox |
 | `roadmap.md` | Próximos passos do produto |

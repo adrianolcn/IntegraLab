@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
 public class TheoryLessonController {
 
     private final TheoryLessonService theoryLessonService;
